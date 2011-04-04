@@ -1,0 +1,5 @@
+
+#ifndef WATER_H
+void water_init();
+void water_display();
+#end

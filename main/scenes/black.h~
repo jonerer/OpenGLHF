@@ -1,0 +1,7 @@
+
+#ifndef BLACK_H
+#define BLACK_H
+void black_load();
+int black_init();
+void black_display();
+#endif
