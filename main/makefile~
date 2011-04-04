@@ -1,0 +1,8 @@
+
+all : demoz 
+
+demoz : 
+	gcc -Wall -o demoz -lGL -lglut -ljpeg scenes/entry.c scenes/black.c scenes/water.c helpers.c readppm.c readjpeg.c zpr.c loadobj.c shaderutils.c
+clean :
+	rm demoz
+
