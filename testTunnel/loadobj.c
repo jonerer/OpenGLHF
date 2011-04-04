@@ -10,6 +10,8 @@
 #include <string.h>
 #include <math.h>
 
+#define PI 3.141592
+
 
 typedef struct Mesh
 {
@@ -631,11 +633,11 @@ static void generateNormals(Mesh* mesh)
 	  float influence2 = (v1x * v2x + v1y * v2y + v1z * v2z) / (len1 * len2);
 
 	  float angle0 = (influence0 >= 1.f) ? 0 : 
-	    (influence0 <= -1.f) ? M_PI : acos(influence0);
+	    (influence0 <= -1.f) ? PI : acos(influence0);
 	  float angle1 = (influence1 >= 1.f) ? 0 : 
-	    (influence1 <= -1.f) ? M_PI : acos(influence1);
+	    (influence1 <= -1.f) ? PI : acos(influence1);
 	  float angle2 = (influence2 >= 1.f) ? 0 : 
-	    (influence2 <= -1.f) ? M_PI : acos(influence2);
+	    (influence2 <= -1.f) ? PI : acos(influence2);
 
 	  float normalX = v1z * v0y - v1y * v0z;
 	  float normalY = v1x * v0z - v1z * v0x;

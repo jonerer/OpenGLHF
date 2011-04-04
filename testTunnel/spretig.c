@@ -16,10 +16,6 @@ void init()
   // Place one-time initialization code here
 }
 
-int heightAt(int row, int col) {
-  return (int)imagedata[(row*width + col)*3];
-}
-
 void display()
 {
   // This function is called whenever it is time to render
@@ -31,15 +27,12 @@ void display()
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-  gluPerspective(90, 1, 0.01, 200);
+  gluPerspective(90, 1, 0.01, 100);
   glMatrixMode(GL_MODELVIEW);
   glEnable(GL_DEPTH_TEST);
   glLoadIdentity();
-  glEnable(GL_TEXTURE_2D);
-  //glLoadMatrixd(getObjectMatrix());
-  //glLoadMatrixd(getCameraMatrix());
-  float sec = getElapsedTime()*5;
-  gluLookAt(cos(sec / 9) * 5, sin(sec / 10)*5,0 - sec, 0,0, -10 - sec, 0, 1, 0);
+   glEnable(GL_TEXTURE_2D);
+  glLoadMatrixd(getObjectMatrix());
   // Enable Gouraud shading
   glShadeModel(GL_SMOOTH);
 
@@ -49,7 +42,7 @@ void display()
 
 float depth = -5;
 int z = 1;
-float zstep = 1;
+int zstep = 1;
 float ztexstep = 0.01;
 //float hyp = 5;
 float textint = 0;
@@ -58,43 +51,36 @@ glBindTexture(GL_TEXTURE_2D, tunnelTexture);
 
 float ztexphase = 0;
  //glRotatef(getElapsedTime()*5, 0, 0, 1);
-for (;z <= 300; z++) {
+for (;z <= 100; z++) {
 
   int i = 1;
   for(;i <= 360; i++) {
 	//printf("fiskapa %d - ", z);
 	//printf("%d", i);
 	//printf("\n");
-	float heightDivisorer = 50;
-	float baseHyp = 10;
-	float hyp =  baseHyp + heightAt(z, i) / heightDivisorer;
-	float hypC = baseHyp + heightAt(z, i+1) / heightDivisorer;
-	float hypR = baseHyp + heightAt(z+1, i) / heightDivisorer;
-	float hypCR = baseHyp + heightAt(z+1, i+1) / heightDivisorer;
-        //hyp = hypC = hypR = hypCR = 5;
-	//printf("%f\n", hyp);
+	float hyp =  5 + ((int)imagedata[(i*height + z)*3]) / 50.0;
+	//printf("%d\n", height);
 
-	float x = cos(i*PI/180.0);
-	float y = sin(i*PI/180.0);
-	float xplusone = cos((i+1)*PI/180.0);
-	float yplusone = sin((i+1)*PI/180.0);
+	float x = cos(i*PI/180) * hyp;
+	float y = sin(i*PI/180) * hyp;
+	float xplusone = cos((i+1)*PI/180) * hyp;
+	float yplusone = sin((i+1)*PI/180) * hyp;
   	glBegin(GL_POLYGON);
         glTexCoord2f(ztexphase, textint);
-	glVertex3f(x*hyp, y*hyp, -z*zstep);
+	glVertex3f(x, y, -z);
 
         glTexCoord2f(ztexphase+ztexstep, textint);	
-	glVertex3f(x*hypR, y*hypR, -(z*zstep + zstep));
+	glVertex3f(x, y, -(z + zstep));
 
         glTexCoord2f(ztexphase+ztexstep, textint+10/360);
-	glVertex3f(xplusone*hypCR, yplusone*hypCR, -(z*zstep + zstep));
+	glVertex3f(xplusone, yplusone, -(z + zstep));
 
-        glTexCoord2f(ztexphase, textint+10/360);	
-	glVertex3f(xplusone*hypC, yplusone*hypC, -z*zstep);
+        glTexCoord2f(ztexphase, textint+10/360); 	
+	glVertex3f(xplusone, yplusone, -z);
   	glEnd();
 	textint = (textint+10/360);
-
+	ztexphase += ztexstep;
   }
-  ztexphase += ztexstep;
 }
 /*
 glBegin(GL_POLYGON);
@@ -232,9 +218,9 @@ glBegin(GL_POLYGON);
 }
 
 void load() {
-  //printf("%s", "yeah");
+  printf("%s", "yeah");
   imagedata = readppm("../lab4/heightmaps/fft-terrain-360-bred.ppm", &height, &width);
-  //printf("%d", height);
+  printf("%d", height);
 }
 
 void idle()
