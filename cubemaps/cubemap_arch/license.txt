@@ -1,0 +1,2 @@
+This cubemap is made by Paul Bourke.
+It is free for noncommercial use.
