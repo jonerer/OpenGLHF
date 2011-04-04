@@ -1,0 +1,59 @@
+3-3
+
+How do you scale along the model's coordinate axes? How do you scale along a view coordinate axes?
+
+Scaling gl_Position vs scaling gl_Vertex
+
+gl_FrontColor = transformedNormal.zzzz;
+
+means that the parts that have a normal pointing towards positive Z (towards us) will get a higher value (get lighter) in this case white because all 4 values are set to the same direction. 
+
+
+Why is there a separate gl_NormalMatrix for normals? Shouldn't gl_ModelViewMatrix be good for transforming normals as well?
+
+It has the right dimension (3 instead of 4)
+
+3-4
+The speed is controlled by the constant (here 5):
+gl_Position[0] = sin(5 * time + gl_Position[1] * 10)/20+gl_Position[0];
+
+
+3-5
+How do you efficiently check for a null-vector in GLSL?
+If it's length is null, its null.
+
+How do you compute a light direction vector from the surface to the lightsource, when the light is positional?
+The position of the light - the position of the surface (in the world, not as seen by the camera).
+
+How does a lightsource contribute to the lighting on the opposite side of the mesh? Do you have any special logic for handling that properly?
+
+You will get the negative value, for example Red becomes cyan, we solved this buy checking that the strength of our light wasn't negative. Another thing you can do is to clamp the value of the light between 0 and 1.
+
+
+3-6
+Perhaps you made some approximations, such as calculating a half-vector. Which approximations is your implementation using? Why did you do those approximations?
+Instead of calculating a half-vector, we use a vector that points from the object towards us. 
+
+How do you generate a vector from the surface to the eye?
+We didn't generate instead we made a vector that points in positive z-direction. (0,0,1.0).
+
+
+How can you implement specular reflections for a directional lightsource, even though the lightsource itself does not have any explicit position?
+You will have to approximate a position for the light, this can be done by giving it a "position" in the opposite direction of its own direction. 
+
+Which vectors need renormalization in the fragment shader?
+We need to renormalize the vectors that we are calculating in the fragmentshader, e.g The vector between the lightsource and the model and the vector between the model and us. The other vectors that are being used to calculate these are already normalized before they are being used in the fragmentshader.
+
+3-7
+How did you choose to combine the texture colour and the lighting colour?
+gl_fragColor *= gl_fragColor(texturesstuff);
+
+
+
+How did you choose to combine the two textures?
+We draw one of the textures from top to middle, fading out, and the other one from bottom to middle, fading out.
+
+
+3-8
+YES CARTOON!
+

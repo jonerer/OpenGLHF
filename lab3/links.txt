@@ -1,0 +1,2 @@
+http://www.opengl.org/sdk/docs/man/
+http://www.opengl.org/documentation/specs/version2.0/glspec20.pdf

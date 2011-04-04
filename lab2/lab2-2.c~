@@ -1,0 +1,132 @@
+
+#include <GL/glut.h>
+#include <math.h>
+
+#include "helpers.h"
+#include "cube.h"
+
+GLuint textureId;
+Model* bunny;
+
+void init()
+{
+  // Place one-time initialization code here
+  textureId = loadTexture("../textures/BrickModernLarge0119_S.jpg");
+  bunny = loadModel("../models/various/bunny.obj");
+}
+
+void display()
+{
+  // This function is called whenever it is time to render
+  //  a new frame; due to the idle()-function below, this
+  //  function will get called several times per second
+
+  // Clear framebuffer & zbuffer
+  glClearColor(0.3, 0, 0, 1);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+  // Position light 0
+  glMatrixMode(GL_MODELVIEW);
+  glLoadIdentity();
+  GLfloat light_position[] = { 0.0, 0.0, 1.0, 0.0 };
+  glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+
+  // Enable lighting and light 0
+  glEnable(GL_LIGHTING);
+  glEnable(GL_LIGHT0);
+  glEnable(GL_NORMALIZE);
+
+  // Set default material properties
+  GLfloat mat_shininess[] = { 50.0 };
+  GLfloat mat_diffuseColor[] = { 1.0, 1.0, 1.0, 1.0 };
+  GLfloat mat_specularColor[] = { 1.0, 1.0, 1.0, 1.0 };
+
+  glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
+  glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuseColor);
+  glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specularColor);
+
+  // Setup projection matrix
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+  gluPerspective(90, 1, 0.01, 100);
+
+  // Setup object matrix
+  glMatrixMode(GL_MODELVIEW);
+  glLoadIdentity();
+  glLoadMatrixd(getObjectMatrix());
+
+  // Enable Z-buffering
+  glEnable(GL_DEPTH_TEST);
+
+  // Enable Gouraud shading
+  glShadeModel(GL_SMOOTH);
+
+  // Enable backface culling
+  glEnable(GL_CULL_FACE);
+  glCullFace(GL_BACK);
+
+  // Enable texturing
+  glEnable(GL_TEXTURE_2D);
+  glBindTexture(GL_TEXTURE_2D, textureId);
+  glEnable(GL_TEXTURE_GEN_S);
+  glEnable(GL_TEXTURE_GEN_T);
+  glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
+  glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
+  //glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
+  //glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
+      GLfloat planeS[] = {0.5, 0.0, 0.0, 0.5};
+      GLfloat planeT[] = {0.0, 0.5, 0.0, 0.5};
+      glTexGenfv(GL_S, GL_OBJECT_PLANE, planeS);
+      glTexGenfv(GL_T, GL_OBJECT_PLANE, planeT);
+
+  // Draw cube using array-based API
+  //glEnableClientState(GL_COLOR_ARRAY);
+  glEnableClientState(GL_VERTEX_ARRAY);
+  glEnableClientState(GL_NORMAL_ARRAY);
+  //glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+  glColorPointer(3, GL_FLOAT, 0, bunny->colorArray);
+  glVertexPointer(3, GL_FLOAT, 0, bunny->vertexArray);
+  glNormalPointer(GL_FLOAT, 0, bunny->normalArray);
+  glTexCoordPointer(2, GL_FLOAT, 0, bunny->texCoordArray);
+  glDrawElements(GL_TRIANGLES, bunny->numIndices, GL_UNSIGNED_INT, bunny->indexArray);
+
+  // Swap front- and backbuffers
+  glutSwapBuffers();
+}
+
+void idle()
+{
+  // This function is called whenever the computer is idle
+
+  // As soon as the machine is idle, ask GLUT to trigger rendering of a new
+  // frame
+  glutPostRedisplay();
+}
+
+int main(int argc, char **argv)
+{
+  glutInit(&argc, argv);
+
+  // Configure GLUT:
+  //  - framebuffer with RGB + Alpha values per pixel
+  //  - Z-buffer
+  //  - two sets of above mentioned buffers, so that
+  //    doublebuffering is possible
+  //
+  // Initial window size 800x800
+  glutInitDisplayMode(GLUT_RGBA | GLUT_DEPTH | GLUT_DOUBLE);
+  glutInitWindowSize(800, 800);
+  glutCreateWindow("OpenGL test");
+
+  initHelperLibrary();
+  init();
+
+  // Register our display- and idle-functions with GLUT
+  glutDisplayFunc(display);
+  glutIdleFunc(idle);
+
+  // Enter GLUT's main loop; this function will never return
+  glutMainLoop();
+
+  return 0;
+}

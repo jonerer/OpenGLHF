@@ -1,0 +1,77 @@
+answers
+
+4-1
+What kind of data does the heightmap image data hold? What range is the heightmap data? 
+
+(0, 0): R = 0, G = 0, B = 0
+(0, 1): R = 128, G = 128, B = 128
+(0, 2): R = 128, G = 128, B = 128
+(0, 3): R = 0, G = 0, B = 0
+(1, 0): R = 128, G = 128, B = 128
+(1, 1): R = 255, G = 255, B = 255
+(1, 2): R = 255, G = 255, B = 255
+(1, 3): R = 128, G = 128, B = 128
+(2, 0): R = 128, G = 128, B = 128
+(2, 1): R = 232, G = 232, B = 232
+(2, 2): R = 255, G = 255, B = 255
+(2, 3): R = 128, G = 128, B = 128
+(3, 0): R = 27, G = 27, B = 27
+(3, 1): R = 128, G = 128, B = 128
+(3, 2): R = 128, G = 128, B = 128
+(3, 3): R = 0, G = 0, B = 0
+
+It contains greyscale colors, each color-value represents a height :B
+
+:EGD
+
+
+4-2
+    * How do you scale the indices to produce coordinates?
+int sideLength = 200;
+float widthNodes = width - 1;
+float xLow = row*(sideLength/widthNodes) - sideLength / 2;
+
+
+    * Did you introduce any intermediary variables to simplify the rendering code? Why/why not? 
+...
+int sideLength = 200;
+float widthNodes = width - 1;
+float xLow = row*(sideLength/widthNodes) - sideLength / 2;
+float texnumb = sideLength/widthNodes / texLength;
+
+float xLow = row*(sideLength/widthNodes) - sideLength / 2;
+float xHigh = (row+1)*(sideLength/widthNodes) - sideLength / 2;
+
+float zLow = col*(sideLength/heightNodes) - sideLength / 2;
+float zHigh = (col+1)*(sideLength/heightNodes) - sideLength / 2;
+
+
+
+
+4-3
+    * How did you implement the cross product? Function call, inline...? Normalization?
+By defining a macro 
+#define crossProduct(a,b,c) \
+	(a)[0] = (b)[1] * (c)[2] - (c)[1] * (b)[2]; \
+	(a)[1] = (b)[2] * (c)[0] - (c)[2] * (b)[0]; \
+	(a)[2] = (b)[0] * (c)[1] - (c)[0] * (b)[1];
+
+
+    * Does the lighting look nice? What can be done to improve it further? 
+It looked ok, but not super, so we changed it to a positional light and got a much more appreciated result.
+
+4-4
+
+    * How did you figure out what surface to use?
+	We choose a random x and z.
+	Then we loop through all our quads, selecting those who have the same x and z.
+	checking which corner is the nearest to our object, with that information we know which triangle it is.
+
+int quad[] = { ((haxPos[0] + sideLength / 2) / (sideLength/widthNodes))
+		, ((haxPos[2] + sideLength / 2) / (sideLength/heightNodes)) };
+...
+	float botleftDistance = sqrt(pow(quad[0]-xLow,2)+pow(quad[1]-zLow,2));
+	float toprightDistance = sqrt(pow(quad[0]-xHigh,2)+pow(quad[1]-zHigh,2));
+
+    * How did you calculate the height from the surface? 
+	plane equation of the surface.

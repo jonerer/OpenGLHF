@@ -1,0 +1,19 @@
+uniform float time;
+varying vec3 pixnorm;
+varying vec4 pixmodverpos;
+varying vec4 pixpromodverpos;
+varying vec4 vert;
+
+
+void main()
+{
+  gl_Position = gl_ProjectionMatrix * gl_ModelViewMatrix * gl_Vertex;
+  pixmodverpos = gl_ModelViewMatrix * gl_Vertex;
+
+  pixpromodverpos = gl_Position;
+  vert = gl_Vertex;
+
+  vec3 transformedNormal = gl_NormalMatrix * gl_Normal;
+
+  pixnorm = normalize(transformedNormal);
+}
