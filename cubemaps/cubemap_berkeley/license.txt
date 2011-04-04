@@ -1,0 +1,3 @@
+This cubemap comes originally from The Campanile Movie, see
+http://www.debevec.org/Campanile/ .
+It is free for noncommercial use.
