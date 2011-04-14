@@ -59,8 +59,8 @@ float heightDivisorer = 3;
 float haxPos[] = { 0+getElapsedTime(), 0, 50 };
 int quad[] = { ((haxPos[0] + sideLength / 2) / (sideLength/widthNodes))
 		, ((haxPos[2] + sideLength / 2) / (sideLength/heightNodes)) };
-printf("quad: %d, %d \n", quad[0], quad[1]);
-printf("heightNodes, Widthnodes, height, width: %f, %f\n", heightNodes, widthNodes);
+//printf("quad: %d, %d \n", quad[0], quad[1]);
+//printf("heightNodes, Widthnodes, height, width: %f, %f\n", heightNodes, widthNodes);
 
     for (row = 0; row < heightNodes; row++)	{
       for (col = 0; col < widthNodes; col++) {
@@ -117,7 +117,7 @@ if(quad[0] == row && quad[1] == col) {
 	float botleftDistance = sqrt(pow(quad[0]-xLow,2)+pow(quad[1]-zLow,2));
 	float toprightDistance = sqrt(pow(quad[0]-xHigh,2)+pow(quad[1]-zHigh,2));
 
-	printf("botleftdist: %f, topleftdist: %f\n", botleftDistance, toprightDistance);
+	//printf("botleftdist: %f, topleftdist: %f\n", botleftDistance, toprightDistance);
 	//float y = botleftDistance < toprightDistance ? yLowLow : yHighHigh;
 	//float x = botleftDistance < toprightDistance ? xLow : xHigh;
 	//float z = botleftDistance < toprightDistance ? zLow : zHigh; 
@@ -149,9 +149,9 @@ if(quad[0] == row && quad[1] == col) {
 	yPos = -(d+normal[0]*(haxPos[0]-cornerX)+(haxPos[2]-cornerZ)*normal[2])/normal[1] + cornerY;
 	
 
-        printf("grr: (%d, %f, %d): height: %d\n", row, yPos, col, (int)imagedata[(row*width + col)*3]);
+        //printf("grr: (%d, %f, %d): height: %d\n", row, yPos, col, (int)imagedata[(row*width + col)*3]);
   glPushMatrix();
-  glTranslatef(haxPos[0], yPos, haxPos[2]);
+  glTranslatef(haxPos[0], yPos+10, haxPos[2]);
   //glRotatef(-56, 1, 1, 0);
   glScalef(1, 1, 1);
   glEnableClientState(GL_VERTEX_ARRAY);
@@ -216,8 +216,9 @@ void init()
   groundTexture = loadTexture("../textures/TropicalFoliage0025_1_S.jpg");
     klingoff = loadModel("../models/various/klingon.obj");
   // A heightmap image
-  imagedata = readppm("heightmaps/44-terrain.ppm", &height, &width);
+  //imagedata = readppm("heightmaps/44-terrain.ppm", &height, &width);
 //  imagedata = readppm("../../../heightmaps/fft-terrain.ppm", &height, &width);
+  imagedata = readppm("heightmaps/fft-terrain-larger.ppm", &height, &width);
 
   // Print out image contents.
   // Warning! Only do this for small images or you will get incredible amounts of data!
@@ -226,7 +227,7 @@ void init()
     for (row = 0; row < height; row++)
       for (col = 0; col < width; col++)
       {
-        printf("(%d, %d): R = %d, G = %d, B = %d\n", row, col, (int)imagedata[(row*width + col)*3], (int)imagedata[(row*width + col)*3+1], (int)imagedata[(row*width + col)*3+2]);
+        //printf("(%d, %d): R = %d, G = %d, B = %d\n", row, col, (int)imagedata[(row*width + col)*3], (int)imagedata[(row*width + col)*3+1], (int)imagedata[(row*width + col)*3+2]);
       }
   // Use the imagedata array for heights in the terrain!
 
