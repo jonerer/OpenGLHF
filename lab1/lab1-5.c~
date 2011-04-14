@@ -3,11 +3,117 @@
 #include <math.h>
 
 #include "helpers.h"
+typedef struct cube // A Structure To Hold A Single Cube
+{
+	float x;
+	float y;
+	float z;
+	float rotationPHI;
+	float rotationTHETA;
+	float rotationALPHA;
+// indicates the bottomleftfront corner of the cube, with size:
+	float size;
+}
+CUBE;
+
+CUBE cubes[40];
 
 void init()
 {
-  // Place one-time initialization code here
+int i = 0;
+int directionX = 1;
+int directionY = 1;
+for(; i< 40; i++) {
+int length = i;
+if(i>9) {
+length = i-9;
+directionX = -1;
 }
+if (i>19) {
+length = i-19;
+directionY = -1;
+}
+if (i >29) {
+length = i-29;
+directionX = 1;
+}
+cubes[i].x = length*directionX;
+cubes[i].y = length*directionY;
+cubes[i].z = 0;
+cubes[i].rotationPHI = 0;
+cubes[i].rotationTHETA = 0;
+cubes[i].rotationALPHA = 0;
+cubes[i].size = 0.2; 
+
+}
+ // Place one-time initialization code here
+}
+
+
+void drawCubes()
+{
+  glBegin(GL_POLYGON);
+  int i = 0;
+  for (;i<40; i++) {
+  float size = cubes[i].size;
+  float x = cubes[i].x;
+  float y = cubes[i].y;
+  //framsida
+  glNormal3f(0,0,1);
+  glVertex3f(x-size, y+size, 0.0);
+  glVertex3f(x-size,y-size, 0.0);
+  glVertex3f(x+size,y-size, 0.0);
+  glVertex3f(x+size, y+size, 0.0);
+
+  glEnd();
+  glBegin(GL_POLYGON);
+  //TOP
+  glNormal3f(0, 1, 0);
+  glVertex3f(x-size, y+size, 0.0);
+  glVertex3f(x+size, y+size, 0.0);
+  glVertex3f(x+size,y+size,-size*2);
+  glVertex3f(x-size,y+size,-size*2);
+
+  glEnd();
+  glBegin(GL_POLYGON);
+  //left
+  glNormal3f(-1, 0, 0);
+  glVertex3f(x-size,y+size,0.0);
+  glVertex3f(x-size,y+size,-size*2);
+  glVertex3f(x-size,y-size,-size*2);
+  glVertex3f(x-size,y-size,0.0);
+
+  glEnd();
+  glBegin(GL_POLYGON);
+  //right
+  glNormal3f(1, 0, 0);
+  glVertex3f(x+size,y+size,-size*2);
+  glVertex3f(x+size,y+size,0.0);
+  glVertex3f(x+size,y-size,0.0);
+  glVertex3f(x+size,y-size,-size*2);
+
+  glEnd();
+  glBegin(GL_POLYGON);
+  //background
+  glNormal3f(0, 0, -1);
+  glVertex3f(x+size,y+size,-size*2);
+  glVertex3f(x+size,y-size,-size*2);
+  glVertex3f(x-size,y-size,-size*2);
+  glVertex3f(x-size,y+size,-size*2);
+
+  glEnd();
+  glBegin(GL_POLYGON);
+  //bottom
+  glNormal3f(0, -1, 0);
+  glVertex3f(x-size,y-size,0.0);
+  glVertex3f(x-size,y-size,-size*2);
+   glVertex3f(x+size,y-size,-size*2);
+  glVertex3f(x+size,y-size,0.0);
+
+  glEnd();
+}
+}
+
 
 void display()
 {
@@ -20,8 +126,8 @@ void display()
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
-  GLfloat light_position[] = { -0.7, 1, 1.0, 0.0 };
-glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+  GLfloat light_position[] = { 0.0, 0.0, 0.0, 1.0 };
+  glLightfv(GL_LIGHT0, GL_POSITION, light_position);
   glEnable(GL_LIGHTING);
   glEnable(GL_LIGHT0);
   glEnable(GL_NORMALIZE);
@@ -47,92 +153,10 @@ glLightfv(GL_LIGHT0, GL_POSITION, light_position);
   glEnable(GL_CULL_FACE);
   glCullFace(GL_BACK);
 
-
-  glBegin(GL_POLYGON);
-  //framsida
-  glNormal3f(0,0,1);
-  glColor3f(1, 0, 0);
-  glVertex3f(-0.1, 0.1, 0.0);
-  glColor3f(0, 1, 0);
-  glVertex3f(-0.1,-0.1, 0.0);
-  glColor3f(0, 0, 1);
-  glVertex3f(0.1,-0.1, 0.0);
-  glColor3f(1, 0, 1);  
-  glVertex3f(0.1, 0.1, 0.0);
-
-  glEnd();
-  glBegin(GL_POLYGON);
-  //TOP
-  glNormal3f(0, 1, 0);
-  glColor3f(0, 1, 1);
-  glVertex3f(-0.1, 0.1, 0.0);
-  glColor3f(1, 1, 0);
-  glVertex3f(0.1, 0.1, 0.0);
-  glColor3f(1, 1, 1);
-  glVertex3f(0.1,0.1,-0.2);
-  glColor3f(0.3, 0.6, 1);
-  glVertex3f(-0.1,0.1,-0.2);
-
-  glEnd();
-  glBegin(GL_POLYGON);
-  //left
-  glNormal3f(-1, 0, 0);
-  glColor3f(0,0.4,0.7);
-  glVertex3f(-0.1,0.1,0.0);
-  glColor3f(0.6,0.3,0.0);
-  glVertex3f(-0.1,0.1,-0.2);
-  glColor3f(0.2,1.0,0.0);
-  glVertex3f(-0.1,-0.1,-0.2);
-  glColor3f(1.0,0.4,0.4);
-  glVertex3f(-0.1,-0.1,0.0);
-
-  glEnd();
-  glBegin(GL_POLYGON);
-  //right
-  glNormal3f(1, 0, 0);
-  glColor3f(0,0.9,0.3);
-  glVertex3f(0.1,0.1,-0.2);
-  glColor3f(0.2,0.4,0.7);
-  glVertex3f(0.1,0.1,0.0);
-  glColor3f(0.5,0,0.7);
-  glVertex3f(0.1,-0.1,0.0);
-  glColor3f(0,0.3,0.8);
-  glVertex3f(0.1,-0.1,-0.2);
-
-  glEnd();
-  glBegin(GL_POLYGON);
-  //background
-  glNormal3f(0, 0, -1);
-  glColor3f(1,0.2,0.7);
-  glVertex3f(0.1,0.1,-0.2);
-  glColor3f(1,0.5,0.3);
-  glVertex3f(0.1,-0.1,-0.2);
-  glColor3f(0,0.9,0.7);
-  glVertex3f(-0.1,-0.1,-0.2);
-  glColor3f(0,0.1,0.7);
-  glVertex3f(-0.1,0.1,-0.2);
-
-  glEnd();
-  glBegin(GL_POLYGON);
-  //bottom
-  glNormal3f(0, -1, 0);
-  glColor3f(0.2,0.8,0.7);
-  glVertex3f(-0.1,-0.1,0.0);
-  glColor3f(0.6,0.1,0.2);
-  glVertex3f(-0.1,-0.1,-0.2);
-  glColor3f(1,0.4,0.2);
-  glVertex3f(0.1,-0.1,-0.2);
-  glColor3f(0.1,0.4,1);
-  glVertex3f(0.1,-0.1,0.0);
-
-  glEnd();
-
-
-
+  drawCubes();
   // Swap front- and backbuffers
   glutSwapBuffers();
 }
-
 void idle()
 {
   // This function is called whenever the computer is idle
