@@ -3,8 +3,11 @@
 #include <math.h>
 
 #include "../helpers.h"
+#include "../shaderutils.h"
 #include "water.h"
 #include "black.h"
+#include "tunnel.h"
+#include "screen.h"
 
 // import -window root filnamn.jpg där d finns imagemagick
 // screencapture -S filnamn.jpg på mac
@@ -13,12 +16,14 @@
 #define INIT 1
 #define DISP 2
 
-#define SCENES 2
+#define SCENES 4
 
 #define WATER 0
 #define BLACK 1
+#define TUNNEL 2
+#define SCREEN 3
 
-#define START_SCENE water
+#define START_SCENE WATER
 
 struct _SceneStruct {
  void (*init)();
@@ -64,18 +69,19 @@ void display()
 
 void init(int scene)
 {
+  glPushAttrib(GL_ALL_ATTRIB_BITS);
   scenes[scene].init();
-  scenes[scene].load();
 }
 
 void timer(int i)
 {
   glutTimerFunc(20, timer, i);
   millis_on_scene += 20;
-  printf (" %d, %d : %d \n", curr_scene, millis_on_scene, scenes[curr_scene].time);
+  //printf (" %d, %d : %d \n", curr_scene, millis_on_scene, scenes[curr_scene].time);
   if (millis_on_scene >= scenes[curr_scene].time) {
     millis_on_scene = 0;
     curr_scene++;
+    glPopAttrib();
     init(curr_scene);
     if (curr_scene >= SCENES) {
       exit(0);
@@ -105,7 +111,6 @@ int main(int argc, char **argv)
   glMatrixMode(GL_MODELVIEW);
   
   initHelperLibrary();
-  void (*p)() = water_load;
   scenes[WATER].init = water_init;
   scenes[WATER].load = water_load;
   scenes[WATER].disp = water_disp;
@@ -116,7 +121,22 @@ int main(int argc, char **argv)
   scenes[BLACK].disp = black_disp;
   scenes[BLACK].time = 10000;
 
+  scenes[TUNNEL].init = tunnel_init;
+  scenes[TUNNEL].load = tunnel_load;
+  scenes[TUNNEL].disp = tunnel_disp;
+  scenes[TUNNEL].time = 20000;
+
+  scenes[SCREEN].init = screen_init;
+  scenes[SCREEN].load = screen_load;
+  scenes[SCREEN].disp = screen_disp;
+  scenes[SCREEN].time = 20000;
+
   curr_scene = START_SCENE;
+  int i;
+  for (i = 0; i < SCENES; i++) {
+    scenes[i].load();
+  }
+
   init(START_SCENE);
 
   // Register our display- and idle-functions with GLUT

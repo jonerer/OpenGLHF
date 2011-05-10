@@ -11,16 +11,17 @@
 #error This program needs OpenGL 2.0 libraries to compile
 #endif
 
+#include "../helpers.h"
 #include "../shaderutils.h"
 
 
-Model* model = 0;
+Model* screen_model = 0;
 
-GLuint shaderProgram = 0;
+GLuint screen_shaderProgram = 0;
 int shaderTimeLocation;
 
 
-#define NUM_LIGHTS 4
+#define NUM_SCREEN_LIGHTS 4
 
 typedef struct
 {
@@ -31,7 +32,7 @@ typedef struct
   GLfloat specular[4];
 } LightInfo;
 
-LightInfo lights[NUM_LIGHTS] =
+LightInfo screen_lights[NUM_SCREEN_LIGHTS] =
   {
     { // Light 0
       1,                      // Disabled/Enabled
@@ -67,38 +68,38 @@ LightInfo lights[NUM_LIGHTS] =
   };
 
 
-void black_init()
+void screen_init()
 {
   // Place one-time initialization code here
   initHelperLibrary();
   // load model
-  model = loadModel("../models/various/teapot.obj");
-  setModelCenter(model, 0.f, 0.f, 0.f);
-  setModelRadius(model, 0.3f);
+  screen_model = loadModel("../models/various/teapot.obj");
+  setModelCenter(screen_model, 0.f, 0.f, 0.f);
+  setModelRadius(screen_model, 0.3f);
 
   // Create vertex shader
-  GLuint vertexShader = createShaderFromFile(GL_VERTEX_SHADER, "scenes/black.vs");
+  GLuint vertexShader = createShaderFromFile(GL_VERTEX_SHADER, "scenes/screen.vs");
   if (!vertexShader)
     printf("couldn't create shader program!");
 
   // Create fragment shader
-  GLuint fragmentShader = createShaderFromFile(GL_FRAGMENT_SHADER, "scenes/black.fs");
+  GLuint fragmentShader = createShaderFromFile(GL_FRAGMENT_SHADER, "scenes/screen.fs");
   if (!fragmentShader)
     printf("couldn't create shader program!");
 
   // Create shader program
-  shaderProgram = createShaderProgram(vertexShader, fragmentShader);
-  if (!shaderProgram)
+  screen_shaderProgram = createShaderProgram(vertexShader, fragmentShader);
+  if (!screen_shaderProgram)
     printf("couldn't create shader program!");
 
-  shaderTimeLocation = getUniformLocation(shaderProgram, "time");
+  shaderTimeLocation = getUniformLocation(screen_shaderProgram, "time");
 }
 
-void black_load() {
-
+void screen_load() {
+  printf("whaaaa\");
 }
 
-void setLightSources()
+void screen_setLightSources()
 {
   // Feed lightsource settings into OpenGL; when writing shader
   //  code, this data can be read from the gl_LightSource[i] structures
@@ -107,18 +108,18 @@ void setLightSources()
   glPushMatrix();
 
   int light;
-  for (light = 0; light < NUM_LIGHTS; light++)
+  for (light = 0; light < NUM_SCREEN_LIGHTS; light++)
     {
-      if (lights[light].enabled)
+      if (screen_lights[light].enabled)
 	{
 	  // Lightsource is enabled; set parameters using
 	  //  the current light-matrix
 
 	  glLoadMatrixd(getLightMatrix());
-	  glLightfv(GL_LIGHT0 + light, GL_POSITION, lights[light].position);
-	  glLightfv(GL_LIGHT0 + light, GL_AMBIENT, lights[light].ambient);
-	  glLightfv(GL_LIGHT0 + light, GL_DIFFUSE, lights[light].diffuse);
-	  glLightfv(GL_LIGHT0 + light, GL_SPECULAR, lights[light].specular);
+	  glLightfv(GL_LIGHT0 + light, GL_POSITION, screen_lights[light].position);
+	  glLightfv(GL_LIGHT0 + light, GL_AMBIENT, screen_lights[light].ambient);
+	  glLightfv(GL_LIGHT0 + light, GL_DIFFUSE, screen_lights[light].diffuse);
+	  glLightfv(GL_LIGHT0 + light, GL_SPECULAR, screen_lights[light].specular);
 	}
       else
 	{
@@ -136,7 +137,7 @@ void setLightSources()
   glPopMatrix();
 }
 
-void renderLightSources()
+void screen_renderLightSources()
 {
   // Display location and color of all enabled lightsources
 
@@ -148,9 +149,9 @@ void renderLightSources()
   glLoadMatrixd(getLightMatrix());
 
   int light;
-  for (light = 0; light < NUM_LIGHTS; light++)
+  for (light = 0; light < NUM_SCREEN_LIGHTS; light++)
     {
-      if (lights[light].enabled)
+      if (screen_lights[light].enabled)
 	{
 	  // If directional light, draw line from origin of object
 	  //  in the direction of the light
@@ -158,23 +159,23 @@ void renderLightSources()
 	  //  to location of light
 
 	  glBegin(GL_LINES);
-	  glColor3f(lights[light].diffuse[0],
-		    lights[light].diffuse[1],
-		    lights[light].diffuse[2]);
+	  glColor3f(screen_lights[light].diffuse[0],
+		    screen_lights[light].diffuse[1],
+		    screen_lights[light].diffuse[2]);
 	  glVertex3f(0, 0, 0);
-	  glVertex3f(lights[light].position[0],
-		     lights[light].position[1],
-		     lights[light].position[2]);
+	  glVertex3f(screen_lights[light].position[0],
+		     screen_lights[light].position[1],
+		     screen_lights[light].position[2]);
 	  glEnd();
 
 	  // If positional light, draw a sphere at the location 
 	  //  of the light
-	  if (lights[light].position[3] != 0.f)
+	  if (screen_lights[light].position[3] != 0.f)
 	    {
 	      glPushMatrix();
-	      glTranslatef(lights[light].position[0],
-			   lights[light].position[1],
-			   lights[light].position[2]);
+	      glTranslatef(screen_lights[light].position[0],
+			   screen_lights[light].position[1],
+			   screen_lights[light].position[2]);
 	      glutSolidSphere(0.1f, 10, 10);
 	      glPopMatrix();
 	    }
@@ -186,7 +187,7 @@ void renderLightSources()
   glPopAttrib();
 }
 
-void black_disp()
+void screen_disp()
 {
   // This function is called whenever it is time to render
   //  a new frame; due to the idle()-function below, this
@@ -197,7 +198,7 @@ void black_disp()
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   
   // Position lights
-  setLightSources();
+  screen_setLightSources();
 
   // Setup projection matrix
   glMatrixMode(GL_PROJECTION);
@@ -220,7 +221,7 @@ void black_disp()
   glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
 
   // Activate shader program
-  glUseProgram(shaderProgram);
+  glUseProgram(screen_shaderProgram);
   glUniform1f(shaderTimeLocation, getElapsedTime());
 	//printf("%f", getElapsedTime());
   
@@ -228,11 +229,11 @@ void black_disp()
   glEnableClientState(GL_VERTEX_ARRAY);
   glEnableClientState(GL_NORMAL_ARRAY);
   glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-  glVertexPointer(3, GL_FLOAT, 0, model->vertexArray);
-  glNormalPointer(GL_FLOAT, 0, model->normalArray);
-  glTexCoordPointer(2, GL_FLOAT, 0, model->texCoordArray);
-  glDrawElements(GL_TRIANGLES, model->numIndices, GL_UNSIGNED_INT,
-		 model->indexArray);
+  glVertexPointer(3, GL_FLOAT, 0, screen_model->vertexArray);
+  glNormalPointer(GL_FLOAT, 0, screen_model->normalArray);
+  glTexCoordPointer(2, GL_FLOAT, 0, screen_model->texCoordArray);
+  glDrawElements(GL_TRIANGLES, screen_model->numIndices, GL_UNSIGNED_INT,
+		 screen_model->indexArray);
 
   // Deactivate shader program
   glUseProgram(0);
@@ -240,23 +241,12 @@ void black_disp()
   glPopClientAttrib();
   glPopAttrib();
 
-  renderLightSources();
+  screen_renderLightSources();
 
   // Swap front- and backbuffers
   glutSwapBuffers();
 }
 
-void functionKeys(int key, int mouseX, int mouseY)
-{
-  // Listen for function-keys, and enable/disable corresponding 
-  //  lightsources when they are pressed
-  switch (key)
-    {
-    case GLUT_KEY_F1: lights[0].enabled = 1 - lights[0].enabled; break;
-    case GLUT_KEY_F2: lights[1].enabled = 1 - lights[1].enabled; break;
-    case GLUT_KEY_F3: lights[2].enabled = 1 - lights[2].enabled; break;
-    case GLUT_KEY_F4: lights[3].enabled = 1 - lights[3].enabled; break;
-    }
-}
+
 
 
