@@ -9,6 +9,7 @@ GLuint tunnelTexture;
 
 unsigned char *imagedata;
 int height, width;
+float camera_z = 0;
 
 void init()
 {
@@ -17,7 +18,7 @@ void init()
 }
 
 int heightAt(int row, int col) {
-  return (int)imagedata[(row*width + col)*3];
+  return (int)imagedata[((row % height)*width + col)*3];
 }
 
 void display()
@@ -38,35 +39,44 @@ void display()
   glEnable(GL_TEXTURE_2D);
   //glLoadMatrixd(getObjectMatrix());
   //glLoadMatrixd(getCameraMatrix());
-  float sec = getElapsedTime()*5;
-  gluLookAt(cos(sec / 9) * 5, sin(sec / 10)*5,0 - sec, 0,0, -10 - sec, 0, 1, 0);
+  float sec = getElapsedTime()*20.0;
+  float xsinfreq = 0.02;
+  float ysinfreq = 0.04;
+  camera_z = sec;
+  //gluLookAt(cos(sec * xsinfreq) * 5, sin(sec * ysinfreq)*5, - sec, 0,0, -10 - sec, 0, 1, 0);
+  //printf("%f\n", center_x);
+  gluLookAt(0, 0, - sec, 0, 0, -10 - sec, 0, 1, 0);
   // Enable Gouraud shading
   glShadeModel(GL_SMOOTH);
 
   // Draw polygon
-  //glEnable(GL_CULL_FACE);
-  //glCullFace(GL_BACK);
+  glEnable(GL_CULL_FACE);
+  glCullFace(GL_FRONT);
 
 float depth = -5;
 int z = 1;
 float zstep = 1;
-float ztexstep = 0.01;
+float ztexstep = 0.03;
 //float hyp = 5;
 float textint = 0;
 glBindTexture(GL_TEXTURE_2D, tunnelTexture);
-
+float curvature = 0.01;
+double curr_curv = 0;
+float z_from_camera = 0;
 
 float ztexphase = 0;
- //glRotatef(getElapsedTime()*5, 0, 0, 1);
-for (;z <= 300; z++) {
-
+glRotatef(getElapsedTime()*5, 0, 0, 1);
+for (;z <= camera_z + 200; z++) {
+  double curvnext = curr_curv;
+  z_from_camera = z*zstep - camera_z;
+  curvnext = curr_curv + (curvature * z_from_camera);
   int i = 1;
   for(;i <= 360; i++) {
 	//printf("fiskapa %d - ", z);
 	//printf("%d", i);
 	//printf("\n");
-	float heightDivisorer = 50;
-	float baseHyp = 10;
+	float heightDivisorer = 30;
+	float baseHyp = 20;
 	float hyp =  baseHyp + heightAt(z, i) / heightDivisorer;
 	float hypC = baseHyp + heightAt(z, i+1) / heightDivisorer;
 	float hypR = baseHyp + heightAt(z+1, i) / heightDivisorer;
@@ -78,23 +88,29 @@ for (;z <= 300; z++) {
 	float y = sin(i*PI/180.0);
 	float xplusone = cos((i+1)*PI/180.0);
 	float yplusone = sin((i+1)*PI/180.0);
-  	glBegin(GL_POLYGON);
-        glTexCoord2f(ztexphase, textint);
-	glVertex3f(x*hyp, y*hyp, -z*zstep);
 
-        glTexCoord2f(ztexphase+ztexstep, textint);	
-	glVertex3f(x*hypR, y*hypR, -(z*zstep + zstep));
+	if (z*zstep >= camera_z) {
+  	  glBegin(GL_POLYGON);
+          glTexCoord2f(ztexphase, textint);
+	  glVertex3f(x*hyp + curr_curv, y*hyp, -z*zstep);
 
-        glTexCoord2f(ztexphase+ztexstep, textint+10/360);
-	glVertex3f(xplusone*hypCR, yplusone*hypCR, -(z*zstep + zstep));
+          glTexCoord2f(ztexphase+ztexstep, textint);	
+	  glVertex3f(x*hypR + curvnext, y*hypR, -(z*zstep + zstep));
 
-        glTexCoord2f(ztexphase, textint+10/360);	
-	glVertex3f(xplusone*hypC, yplusone*hypC, -z*zstep);
-  	glEnd();
+          glTexCoord2f(ztexphase+ztexstep, textint+10/360);
+	  glVertex3f(xplusone*hypCR + curvnext, yplusone*hypCR, -(z*zstep + zstep));
+
+          glTexCoord2f(ztexphase, textint+10/360);
+	  glVertex3f(xplusone*hypC + curr_curv, yplusone*hypC, -z*zstep);
+  	  glEnd();
+	}
 	textint = (textint+10/360);
 
   }
   ztexphase += ztexstep;
+  if (z_from_camera > 0) {
+    curr_curv = curvnext;
+  }
 }
 /*
 glBegin(GL_POLYGON);

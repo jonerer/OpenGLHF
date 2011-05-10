@@ -303,10 +303,10 @@ void water_disp()
 void water_load()
 {
   // An ordinary texture
-  groundTexture = loadTexture("../textures/TropicalFoliage0025_1_S.jpg");
-  waterTexture = loadTexture("../textures/water_deep.jpg");
-  fiskautomat = loadTexture("../textures/fiskautomat.jpg");
-    klingoff = loadModel("../models/various/klingon.obj");
+  groundTexture = loadTexture("textures/TropicalFoliage0025_1_S.jpg");
+  waterTexture = loadTexture("textures/water_deep.jpg");
+  fiskautomat = loadTexture("textures/fiskautomat.jpg");
+    klingoff = loadModel("models/various/klingon.obj");
   // A heightmap image
   imagedata = readppm("heightmaps/fft-terrain.ppm", &height, &width);
 
