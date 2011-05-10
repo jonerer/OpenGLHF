@@ -9,7 +9,7 @@
 	(a)[1] = (b)[2] * (c)[0] - (c)[2] * (b)[0]; \
 	(a)[2] = (b)[0] * (c)[1] - (c)[0] * (b)[1];
 
-
+GLuint ss[6];
 GLuint groundTexture;
 GLuint fiskautomat;
 GLuint waterTexture;
@@ -19,6 +19,104 @@ unsigned char *imagedata;
 Model* klingoff;
 int millis = 0;
 
+void drawSkybox()
+{
+glPushMatrix();
+GLdouble lol[16]; 
+int i = 0;
+for(i = 0; i<16; i++) {
+lol[i]= getCameraMatrix()[i];
+}
+lol[12] = 0;
+lol[13] = 0;
+lol[14] = 0;
+glLoadMatrixd(lol);
+glDisable(GL_DEPTH_TEST);
+float hf = 200;
+glBindTexture(GL_TEXTURE_2D, ss[4]);
+  glBegin(GL_POLYGON);
+glColor3f(1, 1, 1); 
+  //baksida
+  glNormal3f(0,0,1);
+   glTexCoord2f(0, 0);
+  glVertex3f(-hf, hf, -hf);
+  glTexCoord2f(0, 1);
+  glVertex3f(-hf,-hf, -hf);
+  glTexCoord2f(1, 1);
+  //glTexCoord2f(getElapsedTime(), 1);
+  glVertex3f(hf,-hf, -hf);
+  glTexCoord2f(1, 0);
+  //glTexCoord2f(getElapsedTime(), 0);  
+  glVertex3f(hf, hf, -hf);
+  glEnd();
+glBindTexture(GL_TEXTURE_2D, ss[1]);
+  glBegin(GL_POLYGON);
+  //BOT
+  glNormal3f(0, 1, 0);
+  glTexCoord2f(0, 0);
+  glVertex3f(-hf, -hf, -hf);
+  glTexCoord2f(0, 1);
+  glVertex3f(-hf, -hf, hf);
+  glTexCoord2f(1, 1);
+  glVertex3f(hf,-hf,hf);
+   glTexCoord2f(1, 0);
+  glVertex3f(hf,-hf,-hf);
+  glEnd();
+glBindTexture(GL_TEXTURE_2D, ss[2]);
+  glBegin(GL_POLYGON);
+  //right
+  glNormal3f(-1, 0, 0);
+  glTexCoord2f(0, 0);
+  glVertex3f(hf,hf,-hf);
+  glTexCoord2f(0, 1);
+  glVertex3f(hf,-hf,-hf);
+  glTexCoord2f(1, 1);
+  glVertex3f(hf,-hf,hf);
+  glTexCoord2f(1, 0);
+  glVertex3f(hf,hf,hf);
+  glEnd();
+glBindTexture(GL_TEXTURE_2D, ss[3]);
+  glBegin(GL_POLYGON);
+  //left
+  glNormal3f(1, 0, 0);
+  glTexCoord2f(0, 0);
+  glVertex3f(-hf,hf,hf);
+  glTexCoord2f(0, 1);
+  glVertex3f(-hf,-hf,hf);
+  glTexCoord2f(1, 1);
+  glVertex3f(-hf,-hf,-hf);
+  glTexCoord2f(1, 0);
+  glVertex3f(-hf,hf,-hf);
+  glEnd();
+glBindTexture(GL_TEXTURE_2D, ss[0]);
+  glBegin(GL_POLYGON);
+  //front
+  glNormal3f(0, 0, -1);
+  glTexCoord2f(0, 0);
+  glVertex3f(hf,hf,hf);
+  glTexCoord2f(0, 1);
+  glVertex3f(hf,-hf,hf);
+  glTexCoord2f(1, 1);
+  glVertex3f(-hf,-hf,hf);
+  glTexCoord2f(1, 0);
+  glVertex3f(-hf,hf,hf);
+  glEnd();
+glBindTexture(GL_TEXTURE_2D, ss[5]);
+  glBegin(GL_POLYGON);
+//top
+  glNormal3f(0, -1, 0);
+  glTexCoord2f(0, 0);
+  glVertex3f(-hf,hf,hf);
+  glTexCoord2f(0, 1);
+  glVertex3f(-hf,hf,-hf);
+  glTexCoord2f(1, 1);
+  glVertex3f(hf,hf,-hf);
+  glTexCoord2f(1, 0);
+  glVertex3f(hf,hf,hf);
+  glEnd();
+glEnable(GL_DEPTH_TEST);
+glPopMatrix();
+}
 void water_renderGround()
 {
   glPushAttrib(GL_ALL_ATTRIB_BITS);
@@ -165,7 +263,7 @@ if(quad[0] == row && quad[1] == col) {
 }
 
 // Light and materials
-  GLfloat light_position[] = { 0.0, 300.0, 0.0, 1.0 }; // Directional from above
+  GLfloat light_position[] = { 0.0, 150, 0.0, 1.0 }; // Directional from above
   GLfloat mat_shininess[] = { 50.0 };
   GLfloat mat_diffuseColor[] = { 1.0, 1.0, 1.0, 1.0 };
   GLfloat mat_specularColor[] = { 1.0, 1.0, 1.0, 1.0 };
@@ -195,12 +293,12 @@ void water_disp()
 
   
   // Render the scene!
+  drawSkybox();
   water_renderGround();
   //water_renderTerrain();
-  
   // Swap front- and backbuffers
   glutSwapBuffers();
-}
+ }
 
 void water_load()
 {
@@ -211,6 +309,43 @@ void water_load()
     klingoff = loadModel("../models/various/klingon.obj");
   // A heightmap image
   imagedata = readppm("heightmaps/fft-terrain.ppm", &height, &width);
+
+  //skybox
+/*  
+ss[0] = loadTexture("../cubemaps/cubemap_berkeley/berkeley_negative_z.jpg"); // back
+  ss[1] = loadTexture("../cubemaps/cubemap_berkeley/berkeley_negative_y.jpg"); // podbot
+  ss[2] = loadTexture("../cubemaps/cubemap_berkeley/berkeley_positive_x.jpg"); // right
+  ss[3] = loadTexture("../cubemaps/cubemap_berkeley/berkeley_negative_x.jpg"); // left
+  ss[4] = loadTexture("../cubemaps/cubemap_berkeley/berkeley_positive_z.jpg"); // front
+  ss[5] = loadTexture("../cubemaps/cubemap_berkeley/berkeley_positive_y.jpg"); // top
+*/
+/*
+  ss[0] = loadTexture("cubemaps/cubemap_grid/cubemap_grid_512.jpg"); // back
+  ss[1] = loadTexture("cubemaps/cubemap_grid/cubemap_grid_512.jpg"); // podbot
+  ss[2] = loadTexture("cubemaps/cubemap_grid/cubemap_grid_512.jpg"); // right
+  ss[3] = loadTexture("cubemaps/cubemap_grid/cubemap_grid_512.jpg"); // left
+  ss[4] = loadTexture("cubemaps/cubemap_grid/cubemap_grid_512.jpg"); // front
+  ss[5] = loadTexture("cubemaps/cubemap_grid/cubemap_grid_512.jpg"); // top
+*/
+/*
+  ss[0] = loadTexture("cubemaps/cubemap_dots/dots_positive_x.jpg"); // back
+  ss[1] = loadTexture("cubemaps/cubemap_dots/dots_negative_y.jpg"); // podbot
+  ss[2] = loadTexture("cubemaps/cubemap_dots/dots_positive_x.jpg"); // right
+  ss[3] = loadTexture("cubemaps/cubemap_dots/dots_negative_x.jpg"); // left
+  ss[4] = loadTexture("cubemaps/cubemap_dots/dots_positive_z.jpg"); // front
+  ss[5] = loadTexture("cubemaps/cubemap_dots/dots_positive_y.jpg"); // top
+*/
+
+  ss[0] = loadTexture("cubemaps/black-wallpaper.jpg"); // back
+  ss[1] = loadTexture("cubemaps/black-wallpaper.jpg"); // podbot
+  ss[2] = loadTexture("cubemaps/black-wallpaper.jpg"); // right
+  ss[3] = loadTexture("cubemaps/black-wallpaper.jpg"); // left
+  ss[4] = loadTexture("cubemaps/black-wallpaper.jpg"); // front
+  ss[5] = loadTexture("cubemaps/black-wallpaper.jpg"); // top
+
+
+
+
 }
 
 void water_init()
