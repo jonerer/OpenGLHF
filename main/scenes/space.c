@@ -2,7 +2,7 @@
 #include <GL/glut.h>
 #include <math.h>
 
-#include "helpers.h"
+#include "../helpers.h"
 GLuint spacetextureId;
 
 float xwidth;
@@ -193,7 +193,7 @@ glColor3f(0.9,0.9,0.9);
 glEnd();
 
 }
-
+/*
 int main(int argc, char **argv)
 {
   glutInit(&argc, argv);
@@ -221,3 +221,4 @@ int main(int argc, char **argv)
 
   return 0;
 }
+*/

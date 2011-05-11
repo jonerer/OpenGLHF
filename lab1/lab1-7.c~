@@ -9,7 +9,7 @@ GLuint ss[6];
 
 void init()
 {
-  textureId = loadTexture("../textures/BrickModernLarge0119_S.jpg");
+  textureId = loadTexture("../textures_old/BrickModernLarge0119_S.jpg");
   // Place one-time initialization code here
   ss[0] = loadTexture("../cubemaps/cubemap_berkeley/berkeley_negative_z.jpg"); // bak
   ss[1] = loadTexture("../cubemaps/cubemap_berkeley/berkeley_negative_y.jpg"); // podbot
@@ -43,7 +43,7 @@ void display()
   glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specularColor);
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-  gluPerspective(90, 1, 0.01, 100);
+  gluPerspective(90, 1, 0.01, 300);
   glMatrixMode(GL_MODELVIEW);
   glEnable(GL_DEPTH_TEST);
   glLoadIdentity();
@@ -60,7 +60,7 @@ void display()
   glEnable(GL_TEXTURE_2D);
   glBindTexture(GL_TEXTURE_2D, textureId);
 
- glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -72,10 +72,10 @@ void display()
   glTexCoord2f(0, 0);
   glVertex3f(-0.1, 0.1, 0.0);
   glColor3f(0, 1, 0);
-  glTexCoord2f(0, 1);
+  glTexCoord2f(0, 0.4);
   glVertex3f(-0.1,-0.1, 0.0);
   glColor3f(0, 0, 1);
-  glTexCoord2f(1, 1);
+  glTexCoord2f(1, 0.4);
   //glTexCoord2f(getElapsedTime(), 1);
   glVertex3f(0.1,-0.1, 0.0);
   glColor3f(1, 0, 1);
