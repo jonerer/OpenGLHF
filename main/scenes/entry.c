@@ -8,6 +8,7 @@
 #include "black.h"
 #include "tunnel.h"
 #include "screen.h"
+#include "space.h"
 
 // import -window root filnamn.jpg där d finns imagemagick
 // screencapture -S filnamn.jpg på mac
@@ -16,12 +17,13 @@
 #define INIT 1
 #define DISP 2
 
-#define SCENES 4
+#define SCENES 5
 
 #define WATER 0
 #define BLACK 1
 #define TUNNEL 2
 #define SCREEN 3
+#define SPACE 4
 
 #define START_SCENE SCREEN
 
@@ -135,6 +137,11 @@ int main(int argc, char **argv)
   scenes[SCREEN].time = 30000;
  
   screen_opts(w_width, w_height);
+
+  scenes[SPACE].init = space_init;
+  scenes[SPACE].load = space_load;
+  scenes[SPACE].disp = space_disp;
+  scenes[SPACE].time = 20000;
 
   curr_scene = START_SCENE;
   int i;
