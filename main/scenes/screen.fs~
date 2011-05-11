@@ -20,7 +20,7 @@ void main()
   if (has_velocity) 
     velocity = clamp((time - 3.0) / 5.0, 0.0, 2.0);
   if (y_shear)
-    position.y += sin(time - 15.0) / 3.0;
+    position.y += cos(time - 15.0) / 3.0;
 
   vec2 uv;
   float dist = abs(position.y);

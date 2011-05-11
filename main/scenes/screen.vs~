@@ -1,7 +1,5 @@
 uniform float time;
 uniform vec2 resolution;
-uniform sampler2D texture;
-uniform sampler2D texture2;
 varying vec4 Pos;
 varying vec4 Vert;
 
