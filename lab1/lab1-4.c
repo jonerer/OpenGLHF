@@ -5,6 +5,7 @@
 #include "helpers.h"
 GLuint textureId;
 GLuint textureId2;
+GLuint megatextureId[2];
 float xwidth;
 float yheight;
 float zdepth;
@@ -16,7 +17,8 @@ void init()
 {
   // Place one-time initialization code here
 textureId = loadTexture("../textures/Space.jpg");
-
+megatextureId[0] = loadTexture("../textures/megamanmask.jpg");
+megatextureId[1] = loadTexture("../textures/megaman.jpg");
 }
 
 
@@ -111,6 +113,47 @@ glColor3f(0.9,0.9,0.9);
   glVertex3f(xwidth,-yheight-5,-zdepth+1);
   glVertex3f(xwidth,-yheight,-zdepth+1);
   glEnd();
+
+
+//make megaman :D
+glEnable(GL_TEXTURE_2D);
+glEnable(GL_BLEND);  
+glDisable(GL_DEPTH_TEST);
+glBlendFunc(GL_DST_COLOR,GL_ZERO);
+float textureStart =0.0;
+float textureFinish =1.0;
+float tS = textureStart;
+float tF = textureFinish;
+glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S, GL_CLAMP);
+glBindTexture(GL_TEXTURE_2D, megatextureId[0]);		// Select The First Mask Texture
+  glBegin(GL_QUADS);					// Start Drawing A Textured Quad
+glTexCoord2f(tS+0.5, tS); 
+glVertex3f(0.0, 0.0,  -2.0);	// Bottom Left
+glTexCoord2f(tF+0.5, tS); 
+glVertex3f(1.45, 0.0,  -2.0);	// Bottom Right
+glTexCoord2f(tF, tF); 
+glVertex3f(1.45,  1.0,  -2.0);// Top Right
+glTexCoord2f(tS, tF); 
+glVertex3f(0.0,  1.0,  -2.0);	// Top Left
+glEnd();						// Done Drawing The Quad
+
+/*Again we enable blending and select our texture for scene 1. We map this texture on top of it's mask. */
+		
+glBlendFunc(GL_ONE, GL_ONE);			// Copy Image 1 Color To The Screen
+glBindTexture(GL_TEXTURE_2D, megatextureId[1]);	// Select The First Image Texture
+  glBegin(GL_QUADS);				// Start Drawing A Textured Quad
+glTexCoord2f(tS, tS); glVertex3f(0.0f, 0.0f,  -2.0f);	// Bottom Left
+glTexCoord2f(tF, tS); glVertex3f( 1.45f, 0.0f,  -2.0f);	// Bottom Right
+glTexCoord2f(tF, tF); glVertex3f( 1.45f,  1.0f,  -2.0f);	// Top Right
+glTexCoord2f(tS, tF); glVertex3f(0.0f,  1.0f,  -2.0f);	// Top Left
+	
+//glBegin(GL_QUADS);
+glEnd();							// Done Drawing The Quad
+
+glDisable(GL_TEXTURE_2D);
+glEnable(GL_DEPTH_TEST); 
+glDisable(GL_BLEND);
+
 
 
 //the moving stuff :D

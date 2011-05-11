@@ -25,7 +25,7 @@
 #define SCREEN 3
 #define SPACE 4
 
-#define START_SCENE SCREEN
+#define START_SCENE SPACE
 
 struct _SceneStruct {
  void (*init)();

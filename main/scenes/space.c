@@ -1,9 +1,12 @@
 
 #include <GL/glut.h>
 #include <math.h>
-
 #include "../helpers.h"
+#include <stdio.h>									
+								
+
 GLuint spacetextureId;
+GLuint megatextureId[2];
 
 float xwidth;
 float yheight;
@@ -11,12 +14,11 @@ float zdepth;
 float starsize;
 float starOffsetX, starOffsetY, starDepth;
 void space_init()
-
-
 {
   // Place one-time initialization code here
 spacetextureId = loadTexture("../textures/Space.jpg");
-
+megatextureId[0] = loadTexture("../textures/megamanmask.jpg");
+megatextureId[1] = loadTexture("../textures/megamantest.jpg");
 }
 
 void space_load() {
@@ -30,8 +32,10 @@ void space_disp()
 
 
   // Clear framebuffer & zbuffer
-  glClearColor(0, 0, 0, 1);
+  glClearColor(0, 0, 0, 0);
+  glClearDepth(1.0);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
   gluPerspective(90, 1, 0.01, 1500);
@@ -39,8 +43,6 @@ void space_disp()
   glEnable(GL_DEPTH_TEST);
   glLoadIdentity();
   //gluLookAt(0,0,0,getElapsedTime(),0,-1, 0, 1, 0); 
-
-
   glLoadMatrixd(getObjectMatrix());
   // Enable Gouraud shading
   glShadeModel(GL_SMOOTH);
@@ -115,13 +117,66 @@ glColor3f(0.9,0.9,0.9);
   glEnd();
 
 
+//make megaman :D
+glEnable(GL_TEXTURE_2D);
+glEnable(GL_BLEND);  
+glDisable(GL_DEPTH_TEST);
+glBlendFunc(GL_DST_COLOR,GL_ZERO);
+float textureStart =0.0;
+float textureFinish =1.0;
+float tS = textureStart;
+float tF = textureFinish;
+float xXx = 0.5;
+//glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S, GL_REPEAT);
+glBindTexture(GL_TEXTURE_2D, megatextureId[0]);		// Select The First Mask Texture
+glBegin(GL_QUADS);					// Start Drawing A Textured Quad
+glTexCoord2f(xXx+tF, tF);
+glVertex3f(0.0f, 0.0f,-2.0f);	// Bottom Left
+glTexCoord2f(xXx+tS, tF);
+glVertex3f( 1.0f, 0.0f,-2.0f);	// Bottom Right
+glTexCoord2f(xXx+tS+0.5, tS);
+glVertex3f( 1.0f,  1.0f,-2.0f);	// Top Right
+glTexCoord2f(xXx+tF+0.5, tS);
+glVertex3f(0.0f,  1.0f,-2.0f);	// Top Left
+glEnd();						// Done Drawing The Quad
+
+/*Again we enable blending and select our texture for scene 1. We map this texture on top of it's mask. */
+		
+glBlendFunc(GL_ONE, GL_ONE);			// Copy Image 1 Color To The Screen
+glBindTexture(GL_TEXTURE_2D, megatextureId[1]);	// Select The First Image Texture
+glBegin(GL_QUADS);				// Start Drawing A Textured Quad
+glTexCoord2f(xXx+tF, tF);
+glVertex3f(0.0f, 0.0f,-2.0f);	// Bottom Left
+glTexCoord2f(xXx+tS, tF);
+glVertex3f( 1.0f, 0.0f,-2.0f);	// Bottom Right
+glTexCoord2f(xXx+tS+0.5, tS);
+glVertex3f( 1.0f,  1.0f,-2.0f);	// Top Right
+ glTexCoord2f(xXx+tF+0.5, tS);
+glVertex3f(0.0f,  1.0f,-2.0f);	// Top Left
+	
+//glBegin(GL_QUADS);
+glEnd();							// Done Drawing The Quad
+
+glDisable(GL_TEXTURE_2D);
+glEnable(GL_DEPTH_TEST); 
+glDisable(GL_BLEND);
+
+
+
+
+
+
+
+
+
+
 //the moving stuff :D
 glPushMatrix();
 
 glTranslatef(-getElapsedTime()*50,0,0);
 //glRotatef(45,0,0,1);
 
-starsize = 15;
+  starsize = 15;
   starOffsetX = 0;
   starOffsetY = 0;
 //Layer 1 :D
@@ -143,6 +198,8 @@ makeEmStars();
 //makeEmStars(xwidth, yheight, zdepth);
 
 glPopMatrix();
+
+
   // Swap front- and backbuffers
   glutSwapBuffers();
 }
