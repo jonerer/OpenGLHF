@@ -108,6 +108,14 @@ void screen_init()
 					createShaderFromFile(GL_FRAGMENT_SHADER, "scenes/noop.fs"));
   waterTexLoc = getUniformLocation(screen_noop, "texture");
 
+  screen_thorus = createShaderProgram(createShaderFromFile(GL_VERTEX_SHADER, "scenes/thorus.vs"), 
+					createShaderFromFile(GL_FRAGMENT_SHADER, "scenes/thorus.fs"));
+  if (!screen_noop)
+    printf("couldn't create shader screen_noop!");
+
+  if (!screen_thorus)
+    printf("couldn't create shader screen_thorus!");
+
     g_resources.vertex_buffer = make_buffer(
         GL_ARRAY_BUFFER,
         g_vertex_buffer_data,
@@ -184,20 +192,25 @@ void screen_disp()
   // Draw mesh using array-based API
 
   glPushMatrix();
+/*
+for debugging:
   float startFall = 0.0;
   float startLongFall = 0.0;
   float startWaveEntry = 0.0;
   float startReturn = 0.0;
-  float startCompleteReturn = 0.0;
+*/
+  float startFall = 40.0;
+  float startLongFall = 42.0;
+  float startWaveEntry = 60.0;
+  float startReturn = 80.0;
 /*
 for gametime:
   float startFall = 40.0;
   float startLongFall = 42.0;
   float startWaveEntry = 60.0;
-  float startReturn = 40.0;
-  float startCompleteReturn = 50.0;
-  float startWaterPart = 70;
+  float startReturn = 50.0;
 */
+  // the Spacetrippin' trip
     if (scElapsedTime() > startFall) {
       glTranslatef(0, 0, clamp(-(scElapsedTime()-startFall), -0.3, 0.0));
     }
@@ -209,21 +222,7 @@ for gametime:
   glutSolidCube(1.0);
   glPopMatrix();
 
-  glPushMatrix();
-  if ((scElapsedTime()-startReturn)*3.5 > 60.0) {
-    glRectf(-1.0, 1.0, 1.0, -1.0);
-  }
-  glTranslatef(0, 0, -60);
-  if (scElapsedTime() > startReturn) {
-    glTranslatef(0, 0, (scElapsedTime()-startReturn)*3.5);
-
-  }
-  glRotatef(scElapsedTime()*90, 1.0, 0.5, 0.0);
-  glutSolidTorus(1.0, 2.0, 120, 180);
-
-  glPopMatrix();
-
-  // Deactivate shader program
+  // The water!
   glUseProgram(screen_noop);
 
   glUniform1i(waterTexLoc, 0);
@@ -234,10 +233,12 @@ for gametime:
   water_renderGround();
   glPopMatrix();
 
+  // the THORUS!
   glUseProgram(screen_thorus);
+  glUniform1f(getUniformLocation(screen_thorus, "time"), scElapsedTime() - startReturn);
 
   glPushMatrix();
-  if ((scElapsedTime()-startReturn)*3.5 > 60.0) {
+  if ((scElapsedTime()-startReturn)*3.5 > 60.0 || startReturn < 1.0) {
     glRectf(-1.0, 1.0, 1.0, -1.0);
   }
   glTranslatef(0, 0, -60);

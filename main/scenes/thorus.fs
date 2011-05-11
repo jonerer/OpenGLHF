@@ -5,16 +5,17 @@ uniform sampler2D texture;
 
 void main()
 {
-  
-  vec3 p = Vert;
-  float strength = p.z + time*30;
-  gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
+  // gonna do a meatball-thing yeah :D
+  vec2 p = (Pos.xy / 2.0) + 0.5;
+  //gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
 
-  strength = clamp(strength, 1.0, 50.0);
-  strength = smoothstep(1.0, 50.0, strength);
+  vec2 uv = p.xy;
+  uv.y += 0;
+  uv.x += 0;
 
-  gl_FragColor = texture2D(texture, p.xy)*strength + vec4(0.0, 0.0, 0.3, 1);
+  gl_FragColor = texture2D(texture, uv.xy);
 
-  float d = time;
+  float d = p.y;
   //gl_FragColor = vec4(d, d, d, 1.0);
+  
 }
