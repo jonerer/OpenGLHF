@@ -134,7 +134,7 @@ int main(int argc, char **argv)
   scenes[SCREEN].init = screen_init;
   scenes[SCREEN].load = screen_load;
   scenes[SCREEN].disp = screen_disp;
-  scenes[SCREEN].time = 30000;
+  scenes[SCREEN].time = 120000;
  
   screen_opts(w_width, w_height);
 

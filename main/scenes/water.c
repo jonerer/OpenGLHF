@@ -117,35 +117,36 @@ glBindTexture(GL_TEXTURE_2D, ss[5]);
 glEnable(GL_DEPTH_TEST);
 glPopMatrix();
 }
+
 void water_renderGround()
 {
   glPushAttrib(GL_ALL_ATTRIB_BITS);
-  glEnable(GL_TEXTURE_2D);
+  glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, waterTexture);
 // Your terrain should match this flat quad
   float waveheight = 2 ;
   glPushMatrix();
   glTranslatef(0, 0.1 + waveheight, 0);
   float phi = 0.1;
-  int x = -30;
-  for(;x < 60; x++) {
+  int x = -100;
+  for(;x < 100; x++) {
 	glBegin(GL_POLYGON);
 	glNormal3f(0, 1, 0);
 	float height = sin(getElapsedTime()+x*phi) * waveheight;
 	float heightplusone = sin(getElapsedTime()+(x+1)*phi) * waveheight;
 	float shearing = sin(getElapsedTime()+x*(phi*20)) * waveheight;
 	float shearingplusone = sin(getElapsedTime()+(x+1)*(phi*20)) * waveheight;
-	glTexCoord2f(0+shearing, 1);
+	//glTexCoord2f(0+shearing, 1);
 
 	// now we get the height (plus one)
 
-	glVertex3f(x, height, 100);
-	glTexCoord2f(0+shearing, 0);
-	glVertex3f(x+1, heightplusone, 100);
-	glTexCoord2f(shearingplusone, 100);
-	glVertex3f(x+1, heightplusone, -100);
-	glTexCoord2f(shearingplusone, 100);
-	glVertex3f(x, height, -100);
+	glVertex3f(x, height, 0);
+	//glTexCoord2f(0+shearing, 0);
+	glVertex3f(x+1, heightplusone, 0);
+	//glTexCoord2f(shearingplusone, 100);
+	glVertex3f(x+1, heightplusone, -200);
+	//glTexCoord2f(shearingplusone, 100);
+	glVertex3f(x, height, -200);
 	glEnd();
   }
   glPopMatrix();

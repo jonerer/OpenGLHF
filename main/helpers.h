@@ -56,4 +56,6 @@ void setModelCenter(Model* model, float x, float y, float z);
 //  the vertex furthest away from the origin is (radius) units away
 void setModelRadius(Model* model, float radius);
 
+float clamp(float val, float min, float max);
+
 #endif
