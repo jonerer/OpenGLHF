@@ -219,3 +219,13 @@ void setModelRadius(Model* model, float radius)
     }
 }
 
+float clamp(float val, float min, float max) {
+  float retval = val;
+  if (val < min) {
+    retval = min;
+  } else if (val > max) {
+    retval = max;
+  }
+  return retval;
+}
+

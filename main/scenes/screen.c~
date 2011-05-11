@@ -22,10 +22,18 @@ GLuint screen_shaderProgram = 0;
 GLuint shaderTimeLocation;
 GLuint resLocation;
 GLuint screen_noop = 0;
+GLuint screen_thorus;
 int shaderTextureLocation, shaderTextureLocation2;
 GLuint res[2] = { 0, 0 };
 int textureId, textureId2;
 
+GLuint waterTexLoc;
+
+int scTimeStarted = 0;
+
+float scElapsedTime() {
+  return getElapsedTime() - scTimeStarted;
+}
 // make_buffer courtesy of http://duriansoftware.com/joe/An-intro-to-modern-OpenGL.-Chapter-2.1:-Buffers-and-Textures.html
 static struct {
     GLuint vertex_buffer, element_buffer;
@@ -73,6 +81,7 @@ void screen_init()
 {
   // Place one-time initialization code here
   initHelperLibrary();
+  scTimeStarted = scElapsedTime();
   // load model
   screen_model = loadModel("../models/various/teapot.obj"); 
   setModelCenter(screen_model, 0.f, 0.f, 0.f);
@@ -97,6 +106,7 @@ void screen_init()
 
   screen_noop = createShaderProgram(createShaderFromFile(GL_VERTEX_SHADER, "scenes/noop.vs"), 
 					createShaderFromFile(GL_FRAGMENT_SHADER, "scenes/noop.fs"));
+  waterTexLoc = getUniformLocation(screen_noop, "texture");
 
     g_resources.vertex_buffer = make_buffer(
         GL_ARRAY_BUFFER,
@@ -132,13 +142,13 @@ void screen_disp()
   //  function will get called several times per second
 
   // Clear framebuffer & zbuffer
-  glClearColor(0.3, 0, 0, 1);
+  glClearColor(0, 0, 0.3, 1);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   // Setup projection matrix
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-  gluPerspective(90, 1, 0.01, 100);
+  gluPerspective(90, 1, 0.01, 200);
 
   // Setup object matrix
   glMatrixMode(GL_MODELVIEW);
@@ -158,7 +168,7 @@ void screen_disp()
 
   // Activate shader program
   glUseProgram(screen_shaderProgram);
-  glUniform1f(shaderTimeLocation, getElapsedTime());
+  glUniform1f(shaderTimeLocation, scElapsedTime());
   glUniform2f(resLocation, res[0], res[1]);
   //RIGHT PLACE? O_o
   glUniform1i(shaderTextureLocation, 0);
@@ -173,27 +183,71 @@ void screen_disp()
   
   // Draw mesh using array-based API
 
-
-
-/*  glBegin(GL_POLYGON);
-  glColor3f(1, 1, 1);
-  glVertex3f(-0.5, 0.5, 0.0);
-  glColor3f(0, 1, 1);
-  glVertex3f(-0.5,-0.5, 0.0);
-  glColor3f(1, 1, 0.3);
-  glVertex3f( 0.5,-0.5, 0.0);
-  glColor3f(1, 0, 1);
-  glVertex3f( 1, 0, 0.0);
-  glColor3f(0, 0.5, 1);
-  glVertex3f( 0.5, 0.5, 0.0);
-  glEnd();
+  glPushMatrix();
+  float startFall = 0.0;
+  float startLongFall = 0.0;
+  float startWaveEntry = 0.0;
+  float startReturn = 0.0;
+  float startCompleteReturn = 0.0;
+/*
+for gametime:
+  float startFall = 40.0;
+  float startLongFall = 42.0;
+  float startWaveEntry = 60.0;
+  float startReturn = 40.0;
+  float startCompleteReturn = 50.0;
+  float startWaterPart = 70;
 */
-  // Deactivate shader program
-  glUseProgram(noop);
+    if (scElapsedTime() > startFall) {
+      glTranslatef(0, 0, clamp(-(scElapsedTime()-startFall), -0.3, 0.0));
+    }
+    if (scElapsedTime() > startLongFall) {
+      glTranslatef(0, 0, -(scElapsedTime()-startLongFall)*6);
+      glRotatef((scElapsedTime()-startLongFall)*90, 1.0, 0.7, 0.0);
+    }
+
+  glutSolidCube(1.0);
+  glPopMatrix();
 
   glPushMatrix();
-  glTranslatef(0.0, -20.0, 0.0);
+  if ((scElapsedTime()-startReturn)*3.5 > 60.0) {
+    glRectf(-1.0, 1.0, 1.0, -1.0);
+  }
+  glTranslatef(0, 0, -60);
+  if (scElapsedTime() > startReturn) {
+    glTranslatef(0, 0, (scElapsedTime()-startReturn)*3.5);
+
+  }
+  glRotatef(scElapsedTime()*90, 1.0, 0.5, 0.0);
+  glutSolidTorus(1.0, 2.0, 120, 180);
+
+  glPopMatrix();
+
+  // Deactivate shader program
+  glUseProgram(screen_noop);
+
+  glUniform1i(waterTexLoc, 0);
+  glUniform1f(getUniformLocation(screen_noop, "time"), scElapsedTime() - startWaveEntry);
+  glPushMatrix();
+
+  glTranslatef(0.0, -15.0, 0.0);
   water_renderGround();
+  glPopMatrix();
+
+  glUseProgram(screen_thorus);
+
+  glPushMatrix();
+  if ((scElapsedTime()-startReturn)*3.5 > 60.0) {
+    glRectf(-1.0, 1.0, 1.0, -1.0);
+  }
+  glTranslatef(0, 0, -60);
+  if (scElapsedTime() > startReturn) {
+    glTranslatef(0, 0, (scElapsedTime()-startReturn)*3.5);
+
+  }
+  glRotatef(scElapsedTime()*90, 1.0, 0.5, 0.0);
+  glutSolidTorus(1.0, 2.0, 120, 180);
+
   glPopMatrix();
 
   glUseProgram(0);
@@ -206,8 +260,7 @@ void screen_disp()
 }
 
 
-void b() {
-    glRotatef(getElapsedTime(), 1.0, 0.0, 0.0);
+void afvbytarbaenk() {
     glBindBuffer(GL_ARRAY_BUFFER, g_resources.vertex_buffer);
     glVertexAttribPointer(
         g_resources.attributes.position, /* attribute */

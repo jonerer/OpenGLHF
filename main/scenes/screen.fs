@@ -11,7 +11,7 @@ void main()
   gl_FragColor.r = clamp(Vert.y + 0.05 * 25.0, 0.0, 25.0);
 
   //vec2 position = - 1.0 + 2.0 * gl_FragCoord.xy / resolution.xy;
-  vec2 position = Vert;
+  vec2 position = Pos;
   bool y_shear = time > 15.0;
   bool x_shear = time > 20.0;
   bool has_velocity = time > 3.0;
@@ -39,8 +39,9 @@ void main()
   }
 
 
-  float d = velocity;
+  float d = time;
   gl_FragColor = vec4(d, d, d, 1.0);
 
   gl_FragColor = texture2D(texture2, uv)*darkness;
+  
 }
