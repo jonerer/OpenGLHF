@@ -4,4 +4,5 @@
 void water_load();
 void water_init();
 void water_disp();
+void water_renderGround();
 #endif

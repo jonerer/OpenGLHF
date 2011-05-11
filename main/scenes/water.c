@@ -22,6 +22,7 @@ int millis = 0;
 void water_renderGround()
 {
   glPushAttrib(GL_ALL_ATTRIB_BITS);
+  glEnable(GL_TEXTURE_2D);
   glBindTexture(GL_TEXTURE_2D, waterTexture);
 // Your terrain should match this flat quad
   float waveheight = 2 ;

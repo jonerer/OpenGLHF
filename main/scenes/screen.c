@@ -13,6 +13,7 @@
 
 #include "../helpers.h"
 #include "../shaderutils.h"
+#include "water.h"
 
 
 Model* screen_model = 0;
@@ -20,6 +21,7 @@ Model* screen_model = 0;
 GLuint screen_shaderProgram = 0;
 GLuint shaderTimeLocation;
 GLuint resLocation;
+GLuint screen_noop = 0;
 int shaderTextureLocation, shaderTextureLocation2;
 GLuint res[2] = { 0, 0 };
 int textureId, textureId2;
@@ -92,6 +94,9 @@ void screen_init()
   screen_shaderProgram = createShaderProgram(vertexShader, fragmentShader);
   if (!screen_shaderProgram)
     printf("couldn't create shader program!");
+
+  screen_noop = createShaderProgram(createShaderFromFile(GL_VERTEX_SHADER, "scenes/noop.vs"), 
+					createShaderFromFile(GL_FRAGMENT_SHADER, "scenes/noop.fs"));
 
     g_resources.vertex_buffer = make_buffer(
         GL_ARRAY_BUFFER,
@@ -168,6 +173,41 @@ void screen_disp()
   
   // Draw mesh using array-based API
 
+
+
+/*  glBegin(GL_POLYGON);
+  glColor3f(1, 1, 1);
+  glVertex3f(-0.5, 0.5, 0.0);
+  glColor3f(0, 1, 1);
+  glVertex3f(-0.5,-0.5, 0.0);
+  glColor3f(1, 1, 0.3);
+  glVertex3f( 0.5,-0.5, 0.0);
+  glColor3f(1, 0, 1);
+  glVertex3f( 1, 0, 0.0);
+  glColor3f(0, 0.5, 1);
+  glVertex3f( 0.5, 0.5, 0.0);
+  glEnd();
+*/
+  // Deactivate shader program
+  glUseProgram(screen_noop);
+
+  glPushMatrix();
+  glTranslatef(0.0, -20.0, 0.0);
+  water_renderGround();
+  glPopMatrix();
+
+  glUseProgram(0);
+
+  glPopClientAttrib();
+  glPopAttrib();
+
+  // Swap front- and backbuffers
+  glutSwapBuffers();
+}
+
+
+void b() {
+    glRotatef(getElapsedTime(), 1.0, 0.0, 0.0);
     glBindBuffer(GL_ARRAY_BUFFER, g_resources.vertex_buffer);
     glVertexAttribPointer(
         g_resources.attributes.position, /* attribute */
@@ -187,18 +227,4 @@ void screen_disp()
         (void*)0 /* element array buffer offset */
     );
     glDisableVertexAttribArray(g_resources.attributes.position);
-
-
-  // Deactivate shader program
-  glUseProgram(0);
-
-  glPopClientAttrib();
-  glPopAttrib();
-
-  // Swap front- and backbuffers
-  glutSwapBuffers();
 }
-
-
-
-
