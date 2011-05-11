@@ -1,7 +1,8 @@
 
-#ifndef BLACK_H
-#define BLACK_H
-void black_load();
-void black_init();
-void black_disp();
+#ifndef SCREEN_H
+#define SCREEN_H
+void screen_load();
+void screen_init();
+void screen_disp();
+void screen_opts();
 #endif

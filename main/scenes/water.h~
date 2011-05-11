@@ -3,5 +3,6 @@
 #define WATER_H
 void water_load();
 void water_init();
-void water_display();
+void water_disp();
+void water_opts();
 #endif

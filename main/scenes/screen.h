@@ -4,4 +4,5 @@
 void screen_load();
 void screen_init();
 void screen_disp();
+void screen_opts(int, int);
 #endif

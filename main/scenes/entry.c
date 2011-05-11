@@ -29,6 +29,7 @@ struct _SceneStruct {
  void (*init)();
  void (*load)();
  void (*disp)();
+ void (*opts)(int, int);
  int time;
 };
 
@@ -36,6 +37,8 @@ struct _SceneStruct scenes [SCENES];
 
 int millis_on_scene = 0;
 int curr_scene = WATER;
+int w_height = 800;
+int w_width = 800;
 
 void display()
 {
@@ -102,7 +105,7 @@ int main(int argc, char **argv)
   //
   // Initial window size 800x800
   glutInitDisplayMode(GLUT_RGBA | GLUT_DEPTH | GLUT_DOUBLE);
-  glutInitWindowSize(800, 800);
+  glutInitWindowSize(w_width, w_height);
   glutCreateWindow("Lab 4");
 
   glMatrixMode(GL_PROJECTION);
@@ -129,7 +132,9 @@ int main(int argc, char **argv)
   scenes[SCREEN].init = screen_init;
   scenes[SCREEN].load = screen_load;
   scenes[SCREEN].disp = screen_disp;
-  scenes[SCREEN].time = 20000;
+  scenes[SCREEN].time = 30000;
+ 
+  screen_opts(w_width, w_height);
 
   curr_scene = START_SCENE;
   int i;

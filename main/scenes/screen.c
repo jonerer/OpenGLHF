@@ -18,64 +18,65 @@
 Model* screen_model = 0;
 
 GLuint screen_shaderProgram = 0;
-int shaderTimeLocation;
+GLuint shaderTimeLocation;
+GLuint resLocation;
+int shaderTextureLocation, shaderTextureLocation2;
+GLuint res[2] = { 0, 0 };
+int textureId, textureId2;
 
+// make_buffer courtesy of http://duriansoftware.com/joe/An-intro-to-modern-OpenGL.-Chapter-2.1:-Buffers-and-Textures.html
+static struct {
+    GLuint vertex_buffer, element_buffer;
+    GLuint textures[2];
+    GLuint vertex_shader, fragment_shader, program;
+    
+    struct {
+        GLint timer;
+        GLint textures[2];
+    } uniforms;
 
-#define NUM_SCREEN_LIGHTS 4
+    struct {
+        GLint position;
+    } attributes;
 
-typedef struct
-{
-  int enabled;
-  GLfloat position[4];
-  GLfloat ambient[4];
-  GLfloat diffuse[4];
-  GLfloat specular[4];
-} LightInfo;
+    GLfloat timer;
+} g_resources;
 
-LightInfo screen_lights[NUM_SCREEN_LIGHTS] =
-  {
-    { // Light 0
-      1,                      // Disabled/Enabled
-      { 0.1, 0.03, 1.0, 0.0 }, // gl_LightSource[0].position
-      { 0.0, 0.0, 0.0, 0.0 }, // gl_LightSource[0].ambient
-      { 0.5, 0.5, 0.5, 0.0 }, // gl_LightSource[0].diffuse
-      { 0.0, 0.0, 0.0, 0.0 }, // gl_LightSource[0].specular
-    },
+void screen_opts(int width, int height) {
+  res[0] = width;
+  res[1] = height;
+}
 
-    { // Light 1
-      0,                      // Disabled/Enabled
-      { 1.0, 0.0,-1.0, 1.0 }, // gl_LightSource[1].position
-      { 0.0, 0.0, 0.0, 0.0 }, // gl_LightSource[1].ambient
-      { 0.7, 0.0, 0.0, 0.0 }, // gl_LightSource[1].diffuse
-      { 1.0, 1.0, 1.0, 0.0 }, // gl_LightSource[1].specular
-    },
+static GLuint make_buffer(
+  GLenum target,
+  const void *buffer_data,
+  GLsizei buffer_size) {
 
-    { // Light 2
-      0,                      // Disabled/Enabled
-      { 1.0, 1.0, 0.0, 1.0 }, // gl_LightSource[2].position
-      { 0.0, 0.0, 0.0, 0.0 }, // gl_LightSource[2].ambient
-      { 0.0, 0.7, 0.0, 0.0 }, // gl_LightSource[2].diffuse
-      { 0.0, 0.0, 0.0, 0.0 }, // gl_LightSource[2].specular
-    },
+  GLuint buffer;
+  glGenBuffers(1, &buffer);
+  glBindBuffer(target, buffer);
+  glBufferData(target, buffer_size, buffer_data, GL_STATIC_DRAW);
+  return buffer;
+}
 
-    { // Light 3
-      0,                      // Disabled/Enabled
-      { 1.0, 0.0,-3.0, 1.0 }, // gl_LightSource[3].position
-      { 0.0, 0.0, 0.0, 0.0 }, // gl_LightSource[3].ambient
-      { 0.0, 0.0, 0.7, 0.0 }, // gl_LightSource[3].diffuse
-      { 0.0, 0.0, 0.0, 0.0 }, // gl_LightSource[3].specular
-    },
-  };
-
+static const GLfloat g_vertex_buffer_data[] = {
+    -1.0f, -1.0f, 0.0f, 1.0f,
+     1.0f, -1.0f, 0.0f, 1.0f,
+    -1.0f, 1.0f, 0.0f, 1.0f,
+     1.0f, 1.0f, 0.0f, 1.0f
+};
+static const GLushort g_element_buffer_data[] = { 0, 1, 2, 3 };
 
 void screen_init()
 {
   // Place one-time initialization code here
   initHelperLibrary();
   // load model
-  screen_model = loadModel("../models/various/teapot.obj");
+  screen_model = loadModel("../models/various/teapot.obj"); 
   setModelCenter(screen_model, 0.f, 0.f, 0.f);
   setModelRadius(screen_model, 0.3f);
+  textureId = loadTexture("textures/texture_3.jpg"); 
+  textureId2 = loadTexture("textures/stars_ss_dx_org.jpg"); 
 
   // Create vertex shader
   GLuint vertexShader = createShaderFromFile(GL_VERTEX_SHADER, "scenes/screen.vs");
@@ -92,100 +93,32 @@ void screen_init()
   if (!screen_shaderProgram)
     printf("couldn't create shader program!");
 
+    g_resources.vertex_buffer = make_buffer(
+        GL_ARRAY_BUFFER,
+        g_vertex_buffer_data,
+        sizeof(g_vertex_buffer_data)
+    );
+
+    g_resources.element_buffer = make_buffer(
+        GL_ELEMENT_ARRAY_BUFFER,
+        g_element_buffer_data,
+        sizeof(g_element_buffer_data)
+    );
+
+  //buffer = glCreateBuffer();
+  //glBindBuffer(GL_ARRAY_BUFFER, buffer);
+  //glBufferData(GL_ARRAY_BUFFER, { - 1.0, - 1.0, 1.0, - 1.0, - 1.0, 1.0, 1.0, - 1.0, 1.0, 1.0, - 1.0, 1.0 }, GL_STATIC_DRAW);
+
   shaderTimeLocation = getUniformLocation(screen_shaderProgram, "time");
+  resLocation = getUniformLocation(screen_shaderProgram, "resolution");
+  shaderTextureLocation = getUniformLocation(screen_shaderProgram, "texture");
+  shaderTextureLocation2 = getUniformLocation(screen_shaderProgram, "texture2");
 }
 
 void screen_load() {
   printf("whaaaa\n");
 }
 
-void screen_setLightSources()
-{
-  // Feed lightsource settings into OpenGL; when writing shader
-  //  code, this data can be read from the gl_LightSource[i] structures
-
-  glMatrixMode(GL_MODELVIEW);
-  glPushMatrix();
-
-  int light;
-  for (light = 0; light < NUM_SCREEN_LIGHTS; light++)
-    {
-      if (screen_lights[light].enabled)
-	{
-	  // Lightsource is enabled; set parameters using
-	  //  the current light-matrix
-
-	  glLoadMatrixd(getLightMatrix());
-	  glLightfv(GL_LIGHT0 + light, GL_POSITION, screen_lights[light].position);
-	  glLightfv(GL_LIGHT0 + light, GL_AMBIENT, screen_lights[light].ambient);
-	  glLightfv(GL_LIGHT0 + light, GL_DIFFUSE, screen_lights[light].diffuse);
-	  glLightfv(GL_LIGHT0 + light, GL_SPECULAR, screen_lights[light].specular);
-	}
-      else
-	{
-	  // Lightsource is disabled; set all parameters to zero
-
-	  GLfloat zero[4] = { 0.0 };
-	  glLoadIdentity();
-	  glLightfv(GL_LIGHT0 + light, GL_POSITION, zero);
-	  glLightfv(GL_LIGHT0 + light, GL_AMBIENT, zero);
-	  glLightfv(GL_LIGHT0 + light, GL_DIFFUSE, zero);
-	  glLightfv(GL_LIGHT0 + light, GL_SPECULAR, zero);
-	}
-    }
-
-  glPopMatrix();
-}
-
-void screen_renderLightSources()
-{
-  // Display location and color of all enabled lightsources
-
-  glPushAttrib(GL_ALL_ATTRIB_BITS);
-
-  glMatrixMode(GL_MODELVIEW);
-
-  glPushMatrix();
-  glLoadMatrixd(getLightMatrix());
-
-  int light;
-  for (light = 0; light < NUM_SCREEN_LIGHTS; light++)
-    {
-      if (screen_lights[light].enabled)
-	{
-	  // If directional light, draw line from origin of object
-	  //  in the direction of the light
-	  // If positional light, draw line from origin of object
-	  //  to location of light
-
-	  glBegin(GL_LINES);
-	  glColor3f(screen_lights[light].diffuse[0],
-		    screen_lights[light].diffuse[1],
-		    screen_lights[light].diffuse[2]);
-	  glVertex3f(0, 0, 0);
-	  glVertex3f(screen_lights[light].position[0],
-		     screen_lights[light].position[1],
-		     screen_lights[light].position[2]);
-	  glEnd();
-
-	  // If positional light, draw a sphere at the location 
-	  //  of the light
-	  if (screen_lights[light].position[3] != 0.f)
-	    {
-	      glPushMatrix();
-	      glTranslatef(screen_lights[light].position[0],
-			   screen_lights[light].position[1],
-			   screen_lights[light].position[2]);
-	      glutSolidSphere(0.1f, 10, 10);
-	      glPopMatrix();
-	    }
-	  
-	}
-    }
-
-  glPopMatrix();
-  glPopAttrib();
-}
 
 void screen_disp()
 {
@@ -196,9 +129,6 @@ void screen_disp()
   // Clear framebuffer & zbuffer
   glClearColor(0.3, 0, 0, 1);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  
-  // Position lights
-  screen_setLightSources();
 
   // Setup projection matrix
   glMatrixMode(GL_PROJECTION);
@@ -208,7 +138,8 @@ void screen_disp()
   // Setup object matrix
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
-  glMultMatrixd(getObjectMatrix());
+  //glMultMatrixd(getObjectMatrix());
+  gluLookAt(0.0f, 0.0f, 1.0f, 0.0f, 0.0f, -3.0f, 0.0f, 1.0f, 0.0f);
 
   // Enable Z-buffering
   glEnable(GL_DEPTH_TEST);
@@ -223,25 +154,46 @@ void screen_disp()
   // Activate shader program
   glUseProgram(screen_shaderProgram);
   glUniform1f(shaderTimeLocation, getElapsedTime());
-	//printf("%f", getElapsedTime());
+  glUniform2f(resLocation, res[0], res[1]);
+  //RIGHT PLACE? O_o
+  glUniform1i(shaderTextureLocation, 0);
+  glUniform1i(shaderTextureLocation2, 1);
+
+  //fix textures typ
+  glActiveTexture(GL_TEXTURE0);
+  glBindTexture(GL_TEXTURE_2D, textureId);
+
+  glActiveTexture(GL_TEXTURE1);
+  glBindTexture(GL_TEXTURE_2D, textureId2);
   
   // Draw mesh using array-based API
-  glEnableClientState(GL_VERTEX_ARRAY);
-  glEnableClientState(GL_NORMAL_ARRAY);
-  glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-  glVertexPointer(3, GL_FLOAT, 0, screen_model->vertexArray);
-  glNormalPointer(GL_FLOAT, 0, screen_model->normalArray);
-  glTexCoordPointer(2, GL_FLOAT, 0, screen_model->texCoordArray);
-  glDrawElements(GL_TRIANGLES, screen_model->numIndices, GL_UNSIGNED_INT,
-		 screen_model->indexArray);
+
+    glBindBuffer(GL_ARRAY_BUFFER, g_resources.vertex_buffer);
+    glVertexAttribPointer(
+        g_resources.attributes.position, /* attribute */
+        4, /* size */
+        GL_FLOAT, /* type */
+        GL_FALSE, /* normalized? */
+        sizeof(GLfloat)*4, /* stride */
+        (void*)0 /* array buffer offset */
+    );
+    glEnableVertexAttribArray(g_resources.attributes.position);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, g_resources.element_buffer);
+    glDrawElements(
+        GL_TRIANGLE_STRIP, /* mode */
+        4, /* count */
+        GL_UNSIGNED_SHORT, /* type */
+        (void*)0 /* element array buffer offset */
+    );
+    glDisableVertexAttribArray(g_resources.attributes.position);
+
 
   // Deactivate shader program
   glUseProgram(0);
 
   glPopClientAttrib();
   glPopAttrib();
-
-  screen_renderLightSources();
 
   // Swap front- and backbuffers
   glutSwapBuffers();
