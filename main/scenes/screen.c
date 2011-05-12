@@ -25,7 +25,7 @@ GLuint screen_noop = 0;
 GLuint screen_thorus;
 int shaderTextureLocation, shaderTextureLocation2;
 GLuint res[2] = { 0, 0 };
-int textureId, textureId2;
+int textureId, textureId2, textureId3;
 
 GLuint waterTexLoc;
 
@@ -88,6 +88,8 @@ void screen_init()
   setModelRadius(screen_model, 0.3f);
   textureId = loadTexture("textures/texture_3.jpg"); 
   textureId2 = loadTexture("textures/stars_ss_dx_org.jpg"); 
+  textureId3 = loadTexture("textures/stars.jpg"); 
+
 
   // Create vertex shader
   GLuint vertexShader = createShaderFromFile(GL_VERTEX_SHADER, "scenes/screen.vs");
@@ -199,16 +201,16 @@ for debugging:
   float startWaveEntry = 0.0;
   float startReturn = 0.0;
 */
-  float startFall = 40.0;
-  float startLongFall = 42.0;
-  float startWaveEntry = 60.0;
-  float startReturn = 80.0;
+  float startFall = 0.0;
+  float startLongFall = 0.0;
+  float startWaveEntry = 4.0;
+  float startReturn = 10.0;
 /*
 for gametime:
   float startFall = 40.0;
   float startLongFall = 42.0;
-  float startWaveEntry = 60.0;
-  float startReturn = 80.0;
+  float startWaveEntry = 50.0;
+  float startReturn = 60.0;
 */
   // the Spacetrippin' trip
     if (scElapsedTime() > startFall) {
@@ -235,15 +237,34 @@ for gametime:
 
   // the THORUS!
   glUseProgram(screen_thorus);
+
+  glActiveTexture(GL_TEXTURE0);
+  glBindTexture(GL_TEXTURE_2D, textureId);
+
+  glActiveTexture(GL_TEXTURE1);
+  glBindTexture(GL_TEXTURE_2D, textureId2);
+
+  glActiveTexture(GL_TEXTURE2);
+  glBindTexture(GL_TEXTURE_2D, textureId3);
+
+  glUniform1i(getUniformLocation(screen_thorus, "texture"), 0);
+  glUniform1i(getUniformLocation(screen_thorus, "texture2"), 1);
+  glUniform1i(getUniformLocation(screen_thorus, "texture3"), 2);
+
+  float returnSpeed = 60.0;
+// 6 for gametime!
+  float returnDist = 60.0;
+
   glUniform1f(getUniformLocation(screen_thorus, "time"), scElapsedTime() - startReturn);
+  glUniform1f(getUniformLocation(screen_thorus, "timeReaches"), scElapsedTime() - startReturn - returnDist/returnSpeed);
 
   glPushMatrix();
-  if ((scElapsedTime()-startReturn)*3.5 > 60.0 || startReturn < 1.0) {
+  if ((scElapsedTime()-startReturn)*returnSpeed > returnDist || startReturn < 1.0) {
     glRectf(-1.0, 1.0, 1.0, -1.0);
   }
-  glTranslatef(0, 0, -60);
+  glTranslatef(0, 0, -returnDist);
   if (scElapsedTime() > startReturn) {
-    glTranslatef(0, 0, (scElapsedTime()-startReturn)*3.5);
+    glTranslatef(0, 0, (scElapsedTime()-startReturn)*returnSpeed);
 
   }
   glRotatef(scElapsedTime()*90, 1.0, 0.5, 0.0);

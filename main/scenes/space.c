@@ -145,7 +145,7 @@ glVertex3f(megaWidth,-megaheight,-megaDepth);	// Top Left
 glEnd();
 */
 //************************STAR START************************************//
-
+/*
 glDisable(GL_DEPTH_TEST);
 glEnable(GL_TEXTURE_2D);
 glEnable(GL_BLEND);  
@@ -171,10 +171,10 @@ glVertex3f(megaWidth+160.0f,  -megaheight+160.0f,-megaDepth);	// Top Right
 glVertex3f(megaWidth,  -megaheight+160.0f,-megaDepth);	// Top Left
 glEnd();
 
-
+*/
 
 /*Again we enable blending and select our texture for scene 1. We map this texture on top of it's mask. */
-		
+	/*	
 glBlendFunc(GL_ONE, GL_ONE);			// Copy Image 1 Color To The Screen
 glBindTexture(GL_TEXTURE_2D, megatextureId[1]);	// Select The First Image Texture
 glBegin(GL_QUADS);				// Start Drawing A Textured Quad
@@ -191,7 +191,7 @@ glEnd();
 glDisable(GL_TEXTURE_2D);
 glEnable(GL_DEPTH_TEST); 
 glDisable(GL_BLEND);
-
+*/
 //************************STAR END************************************//
 
 
