@@ -16,9 +16,9 @@ float starOffsetX, starOffsetY, starDepth;
 void space_init()
 {
   // Place one-time initialization code here
-spacetextureId = loadTexture("../textures/Space.jpg");
-megatextureId[0] = loadTexture("../textures/3d-star-mask.jpg");
-megatextureId[1] = loadTexture("../textures/3d-star2.jpg");
+spacetextureId = loadTexture("textures/Space.jpg");
+megatextureId[0] = loadTexture("textures/Openglhf.jpg");
+megatextureId[1] = loadTexture("textures/mixed.jpg");
 }
 
 void space_load() {
@@ -119,19 +119,19 @@ glColor3f(0.9,0.9,0.9);
 //the moving stuff :D
 glPushMatrix();
 
-glTranslatef(-getElapsedTime()*50,0,0);
-/*
+glTranslatef(-getElapsedTime()*200,0,0);
+
 float megaDepth = zdepth;
 float megaheight = yheight;
-float megaWidth = xwidth;
+float megaWidth = xwidth*5;
 float textureStart =0.0;
 float textureFinish =1.0;
 float tS = textureStart;
 float tF = textureFinish;
-float xXx = 0.44;
+
 
 glEnable(GL_TEXTURE_2D);
-glBindTexture(GL_TEXTURE_2D, megatextureId[0]);
+glBindTexture(GL_TEXTURE_2D, megatextureId[1]);
 
 glBegin(GL_QUADS);				// Start Drawing A Textured Quad
 glTexCoord2f(tF, tF);
@@ -143,7 +143,24 @@ glVertex3f(megaWidth+1000.0f,-megaheight,-megaDepth);	// Top Right
  glTexCoord2f(tF, tS);
 glVertex3f(megaWidth,-megaheight,-megaDepth);	// Top Left
 glEnd();
-*/
+
+
+
+megaWidth = xwidth*3;
+
+glBindTexture(GL_TEXTURE_2D, megatextureId[0]);
+
+glBegin(GL_QUADS);
+glTexCoord2f(tS, tF);				// Start Drawing A Textured Quad
+glVertex3f(megaWidth, megaheight,-megaDepth);	// Bottom Left
+glTexCoord2f(tF, tF);
+glVertex3f(megaWidth+1000.0f,megaheight,-megaDepth);	// Bottom Right
+ glTexCoord2f(tF, tS);
+glVertex3f(megaWidth+1000.0f,megaheight+160.0f,-megaDepth);	// Top Right
+glTexCoord2f(tS, tS);
+glVertex3f(megaWidth,megaheight+160.0f,-megaDepth);	// Top Left
+glEnd();
+
 //************************STAR START************************************//
 /*
 glDisable(GL_DEPTH_TEST);
@@ -194,23 +211,10 @@ glDisable(GL_BLEND);
 */
 //************************STAR END************************************//
 
-
-makeEmStars();
-
-//Layer 2 :D
-//xwidth = 380;
-//yheight =100;
-//zdepth = 300;
-//makeEmStars(xwidth, yheight, zdepth, starsize);
-
-
-//Layer 3 :D
-//xwidth = 380;
-//yheight =100;
-//zdepth = 300;
-//makeEmStars(xwidth, yheight, zdepth);
-
 glPopMatrix();
+
+
+
   // Swap front- and backbuffers
   glutSwapBuffers();
 }
@@ -224,116 +228,6 @@ void idle()
 }
 
 
-void makeEmStars() 
-{
-drawAStar();
-starOffsetX = 1500;
-starOffsetY = 650;
-
-drawAStar();
-starOffsetX = -starOffsetX/2;
-starOffsetY = -starOffsetY/2;
-
-drawAStar();
-starOffsetX = -starOffsetX/2;
-starOffsetY = -starOffsetY/2;
-
-drawAStar();
-starOffsetX = -starOffsetX/3;
-starOffsetY = -starOffsetY/3;
-
-drawAStar();
-starOffsetX = -starOffsetX/4;
-starOffsetY = -starOffsetY*5;
-
-drawAStar();
-starOffsetX = -starOffsetX*72;
-starOffsetY = -starOffsetY/4;
-
-drawAStar();
-starOffsetX = -starOffsetX/2;
-starOffsetY = -starOffsetY/2;
-
-drawAStar();
-starOffsetX = -starOffsetX*2;
-starOffsetY = -starOffsetY*7;
-
-drawAStar();
-starOffsetX = -starOffsetX/2;
-starOffsetY = -starOffsetY/2;
-
-drawAStar();
-starOffsetX = -starOffsetX-20;
-starOffsetY = -starOffsetY-50;
-
-drawAStar();
-starOffsetX = -starOffsetX/2;
-starOffsetY = -starOffsetY/2;
-
-drawAStar();
-starOffsetX = -starOffsetX/3;
-starOffsetY = -starOffsetY/2.5;
-
-drawAStar();
-starOffsetX = -starOffsetX*4;
-starOffsetY = -starOffsetY*3.4;
-
-drawAStar();
-starOffsetX = -starOffsetX-25;
-starOffsetY = -starOffsetY+18;
-
-drawAStar();
-}
-
-void drawAStar() {
-
-/*
-  glBegin(GL_POLYGON);
-  glColor3f(0.9,0.9,0.9);
-  glVertex3f(0-starOffsetX,0+starOffsetY,-starDepth);
-  glVertex3f(0-starOffsetX,0+starOffsetY-starsize,-starDepth);
-  glVertex3f(0+starsize-starOffsetX,0+starOffsetY-starsize,-starDepth);
-  glVertex3f(0+starsize-starOffsetX,0+starOffsetY,-starDepth);
-  glEnd();
-
-*/
-/*
-glBegin(GL_POLYGON);
-glColor3f(0.9,0.9,0.9);
-  glVertex3f(0-starOffsetX,starsize+starOffsetY,-starDepth);
-  glVertex3f(-starsize/5-starOffsetX,starsize/5+starOffsetY,-starDepth);
-  glVertex3f(-starsize-starOffsetX,starOffsetY,-starDepth);
-  glVertex3f(-starsize/4-starOffsetX,-starsize/4+starOffsetY,-starDepth);
-  glVertex3f(-starsize/3-starOffsetX,-starsize+starOffsetY,-starDepth);
-  glVertex3f(0-starOffsetX, -starsize/4+starOffsetY,-starDepth);
-glEnd();
-
-//Layer2
-glBegin(GL_QUADS);
-glColor3f(0.9,0.9,0.9);
-  glVertex3f(0-starOffsetX,starsize+starOffsetY,-starDepth);
-  glVertex3f(-starsize/5-starOffsetX,starsize/5+starOffsetY,-starDepth);
-  glVertex3f(-starsize-starOffsetX,starOffsetY,-starDepth);
-  glVertex3f(-starsize/4-starOffsetX,-starsize/4+starOffsetY,-starDepth);
-glEnd();
-
-
-glBegin(GL_POLYGON);
-  glVertex3f(-starsize/3-starOffsetX,-starsize+starOffsetY,-starDepth);
-  glVertex3f(0-starOffsetX, -starsize/4+starOffsetY,-starDepth);
-  glVertex3f(
-
-glBegin(GL_POLYGON);
-glColor3f(0.9,0.9,0.9);
-  glVertex3f(0-starOffsetX,starsize+starOffsetY,-starDepth);
-  glVertex3f(-starsize/5-starOffsetX,starsize/5+starOffsetY,-starDepth);
-  glVertex3f(-starsize-starOffsetX,starOffsetY,-starDepth);
-  glVertex3f(-starsize/4-starOffsetX,-starsize/4+starOffsetY,-starDepth);
-  glVertex3f(-starsize/3-starOffsetX,-starsize+starOffsetY,-starDepth);
-  glVertex3f(0-starOffsetX, -starsize/4+starOffsetY,-starDepth);
-glEnd();
-*/
-}
 /*
 int main(int argc, char **argv)
 {
