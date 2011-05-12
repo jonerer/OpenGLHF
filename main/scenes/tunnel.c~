@@ -58,6 +58,7 @@ void tunnel_disp()
   glEnable(GL_DEPTH_TEST);
   glLoadIdentity();
   glEnable(GL_TEXTURE_2D);
+  
   //glLoadMatrixd(getObjectMatrix());
   //glLoadMatrixd(getCameraMatrix());
   //printf(" %i \n", getElapsedTime());
@@ -74,10 +75,15 @@ void tunnel_disp()
   gluLookAt(0, 0, - sec, 0, 0, -10 - sec, 0, 1, 0);
   // Enable Gouraud shading
   glShadeModel(GL_SMOOTH);
-
+  glEnable(GL_DEPTH_TEST);
   // Draw polygon
-  glEnable(GL_CULL_FACE);
-  glCullFace(GL_FRONT);
+  //glEnable(GL_CULL_FACE);
+  //glCullFace(GL_FRONT);
+
+  glPushMatrix();
+  glRectf(-1.0f, 1.0f, 1.0f, -1.0f);
+  glPopMatrix();
+
 
 float depth = -5;
 int z = 1;
