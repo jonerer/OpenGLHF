@@ -25,7 +25,7 @@
 #define SCREEN 3
 #define SPACE 4
 
-#define START_SCENE SCREEN
+#define START_SCENE SPACE
 
 struct _SceneStruct {
  void (*init)();
@@ -141,7 +141,7 @@ int main(int argc, char **argv)
   scenes[SPACE].init = space_init;
   scenes[SPACE].load = space_load;
   scenes[SPACE].disp = space_disp;
-  scenes[SPACE].time = 20000;
+  scenes[SPACE].time = 30000;
 
   curr_scene = START_SCENE;
   int i;
