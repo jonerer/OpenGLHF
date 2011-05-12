@@ -58,12 +58,13 @@ void tunnel_disp()
   glEnable(GL_DEPTH_TEST);
   glLoadIdentity();
   glEnable(GL_TEXTURE_2D);
+  
   //glLoadMatrixd(getObjectMatrix());
   //glLoadMatrixd(getCameraMatrix());
   //printf(" %i \n", getElapsedTime());
   //printf(" %i \n", getElapsedTime());
   //printf(" %i \n", 20*getElapsedTime());
-  float sec = myElapsedTime()*20;
+  float sec = myElapsedTime()*30;
   float xsinfreq = 0.02;
   float ysinfreq = 0.04;
   camera_z = sec;
@@ -75,10 +76,10 @@ void tunnel_disp()
   // Enable Gouraud shading
   glShadeModel(GL_SMOOTH);
   glEnable(GL_DEPTH_TEST);
-
   // Draw polygon
   glEnable(GL_CULL_FACE);
   glCullFace(GL_FRONT);
+
 
 float depth = -5;
 int z = 1;

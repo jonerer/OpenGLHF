@@ -21,11 +21,11 @@
 
 #define WATER 0
 #define BLACK 1
-#define TUNNEL 2
-#define SCREEN 3
-#define SPACE 4
+#define TUNNEL 3
+#define SCREEN 4
+#define SPACE 2
 
-#define START_SCENE SPACE
+#define START_SCENE SCREEN
 
 struct _SceneStruct {
  void (*init)();

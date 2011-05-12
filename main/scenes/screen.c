@@ -34,48 +34,11 @@ int scTimeStarted = 0;
 float scElapsedTime() {
   return getElapsedTime() - scTimeStarted;
 }
-// make_buffer courtesy of http://duriansoftware.com/joe/An-intro-to-modern-OpenGL.-Chapter-2.1:-Buffers-and-Textures.html
-static struct {
-    GLuint vertex_buffer, element_buffer;
-    GLuint textures[2];
-    GLuint vertex_shader, fragment_shader, program;
-    
-    struct {
-        GLint timer;
-        GLint textures[2];
-    } uniforms;
-
-    struct {
-        GLint position;
-    } attributes;
-
-    GLfloat timer;
-} g_resources;
 
 void screen_opts(int width, int height) {
   res[0] = width;
   res[1] = height;
 }
-
-static GLuint make_buffer(
-  GLenum target,
-  const void *buffer_data,
-  GLsizei buffer_size) {
-
-  GLuint buffer;
-  glGenBuffers(1, &buffer);
-  glBindBuffer(target, buffer);
-  glBufferData(target, buffer_size, buffer_data, GL_STATIC_DRAW);
-  return buffer;
-}
-
-static const GLfloat g_vertex_buffer_data[] = {
-    -1.0f, -1.0f, 0.0f, 1.0f,
-     1.0f, -1.0f, 0.0f, 1.0f,
-    -1.0f, 1.0f, 0.0f, 1.0f,
-     1.0f, 1.0f, 0.0f, 1.0f
-};
-static const GLushort g_element_buffer_data[] = { 0, 1, 2, 3 };
 
 void screen_init()
 {
@@ -117,18 +80,6 @@ void screen_init()
 
   if (!screen_thorus)
     printf("couldn't create shader screen_thorus!");
-
-    g_resources.vertex_buffer = make_buffer(
-        GL_ARRAY_BUFFER,
-        g_vertex_buffer_data,
-        sizeof(g_vertex_buffer_data)
-    );
-
-    g_resources.element_buffer = make_buffer(
-        GL_ELEMENT_ARRAY_BUFFER,
-        g_element_buffer_data,
-        sizeof(g_element_buffer_data)
-    );
 
   //buffer = glCreateBuffer();
   //glBindBuffer(GL_ARRAY_BUFFER, buffer);
@@ -203,8 +154,8 @@ for debugging:
 */
   float startFall = 0.0;
   float startLongFall = 0.0;
-  float startWaveEntry = 4.0;
-  float startReturn = 10.0;
+  float startWaveEntry = 0.0;
+  float startReturn = 0.0;
 /*
 for gametime:
   float startFall = 40.0;
@@ -251,7 +202,7 @@ for gametime:
   glUniform1i(getUniformLocation(screen_thorus, "texture2"), 1);
   glUniform1i(getUniformLocation(screen_thorus, "texture3"), 2);
 
-  float returnSpeed = 60.0;
+  float returnSpeed = 6.0;
 // 6 for gametime!
   float returnDist = 60.0;
 
@@ -267,7 +218,7 @@ for gametime:
     glTranslatef(0, 0, (scElapsedTime()-startReturn)*returnSpeed);
 
   }
-  glRotatef(scElapsedTime()*90, 1.0, 0.5, 0.0);
+  glRotatef(scElapsedTime()*90, 1.0, 0.6, 0.0);
   glutSolidTorus(1.0, 2.0, 120, 180);
 
   glPopMatrix();
@@ -279,27 +230,4 @@ for gametime:
 
   // Swap front- and backbuffers
   glutSwapBuffers();
-}
-
-
-void afvbytarbaenk() {
-    glBindBuffer(GL_ARRAY_BUFFER, g_resources.vertex_buffer);
-    glVertexAttribPointer(
-        g_resources.attributes.position, /* attribute */
-        4, /* size */
-        GL_FLOAT, /* type */
-        GL_FALSE, /* normalized? */
-        sizeof(GLfloat)*4, /* stride */
-        (void*)0 /* array buffer offset */
-    );
-    glEnableVertexAttribArray(g_resources.attributes.position);
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, g_resources.element_buffer);
-    glDrawElements(
-        GL_TRIANGLE_STRIP, /* mode */
-        4, /* count */
-        GL_UNSIGNED_SHORT, /* type */
-        (void*)0 /* element array buffer offset */
-    );
-    glDisableVertexAttribArray(g_resources.attributes.position);
 }
