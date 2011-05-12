@@ -152,10 +152,10 @@ for debugging:
   float startWaveEntry = 0.0;
   float startReturn = 0.0;
 */
-  float startFall = 40.0;
-  float startLongFall = 42.0;
-  float startWaveEntry = 50.0;
-  float startReturn = 60.0;
+  float startFall = 0.0;
+  float startLongFall = 0.0;
+  float startWaveEntry = 0.0;
+  float startReturn = 0.0;
 /*
 for gametime:
   float startFall = 40.0;
@@ -218,7 +218,7 @@ for gametime:
     glTranslatef(0, 0, (scElapsedTime()-startReturn)*returnSpeed);
 
   }
-  glRotatef(scElapsedTime()*90, 1.0, 0.5, 0.0);
+  glRotatef(scElapsedTime()*90, 1.0, 0.6, 0.0);
   glutSolidTorus(1.0, 2.0, 120, 180);
 
   glPopMatrix();

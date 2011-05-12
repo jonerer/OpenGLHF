@@ -64,7 +64,7 @@ void tunnel_disp()
   //printf(" %i \n", getElapsedTime());
   //printf(" %i \n", getElapsedTime());
   //printf(" %i \n", 20*getElapsedTime());
-  float sec = myElapsedTime()*20;
+  float sec = myElapsedTime()*30;
   float xsinfreq = 0.02;
   float ysinfreq = 0.04;
   camera_z = sec;

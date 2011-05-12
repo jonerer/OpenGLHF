@@ -77,12 +77,8 @@ void tunnel_disp()
   glShadeModel(GL_SMOOTH);
   glEnable(GL_DEPTH_TEST);
   // Draw polygon
-  //glEnable(GL_CULL_FACE);
-  //glCullFace(GL_FRONT);
-
-  glPushMatrix();
-  glRectf(-1.0f, 1.0f, 1.0f, -1.0f);
-  glPopMatrix();
+  glEnable(GL_CULL_FACE);
+  glCullFace(GL_FRONT);
 
 
 float depth = -5;

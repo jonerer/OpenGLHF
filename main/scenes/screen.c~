@@ -202,7 +202,7 @@ for gametime:
   glUniform1i(getUniformLocation(screen_thorus, "texture2"), 1);
   glUniform1i(getUniformLocation(screen_thorus, "texture3"), 2);
 
-  float returnSpeed = 60.0;
+  float returnSpeed = 6.0;
 // 6 for gametime!
   float returnDist = 60.0;
 
@@ -218,7 +218,7 @@ for gametime:
     glTranslatef(0, 0, (scElapsedTime()-startReturn)*returnSpeed);
 
   }
-  glRotatef(scElapsedTime()*90, 1.0, 0.5, 0.0);
+  glRotatef(scElapsedTime()*90, 1.0, 0.6, 0.0);
   glutSolidTorus(1.0, 2.0, 120, 180);
 
   glPopMatrix();

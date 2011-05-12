@@ -58,9 +58,41 @@ void main()
   vec2 p = (Pos.xy / 2.0) + 0.5;
   //gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
 
-  vec2 uv = p.xy;
+    // två blobbar!
+    vec2 move1;
+    move1.x = cos(timeReaches*0.5)*0.4;
+    move1.y = sin(timeReaches*1)*0.4;
+    vec2 move2;
+    move2.x = cos(timeReaches*1.3)*0.4;
+    move2.y = sin(timeReaches*1.7)*0.4;
+
+    float r1 =(dot(p-move1,p-move1))*16.0;
+    float r2 =(dot(p+move2,p+move2))*32.0;
+
+    //sum the meatballs
+    float metaball =(1.0/r1+1.0/r2);
+    //alter the cut-off power
+    float col = clamp(0.0, 1.0, pow(metaball,6.0));
+    float hardcol = pow(metaball, 6.5);
+    float bgcol = metaball;
+
+    // what uv are we at, bro?
+    vec2 uv = p;
+    uv.x -= move1;
+    uv.y -= move2;
+    vec3 tcol = texture2D(texture, uv).rgb;
+
+    vec3 bgtex = texture2D(texture3, p).rgb;
+
+    //set the output color
+    //vec4 metathing = vec4(tcol * col + hardcol + bgtex * bgcol, 1.0);
+    vec4 metathing = vec4(hardcol + bgtex * bgcol, 1.0);
+
+  uv = p.xy;
   uv.y = uv.y;
-  uv.x = uv.x / 2.0;
+  uv.x = uv.x / 2.0 + timeReaches / 140.0;
+  
+  float fadeTimeFactor = 1;
 
   vec2 dist = Pos.xy;
   dist.x /= clamp(timeReaches - 3.0, 0.0, 100.0) / 5.0;
@@ -70,7 +102,7 @@ void main()
   float d2 = 1 - d;
 
   vec4 bg = texture2D(texture3, uv.xy);
-  gl_FragColor = bg*d2 + screenShaderd*d;
+  gl_FragColor = bg*d2 + screenShaderd*d + metathing*d2;
   // gl_FragColor = vec4(d2, d2, d2, 1.0);
   
 }
