@@ -2,11 +2,9 @@
 #include <GL/glut.h>
 #include <math.h>
 #include "../helpers.h"
-#include <stdio.h>									
-								
+#include <stdio.h>
 
-GLuint spacetextureId;
-GLuint megatextureId[2];
+GLuint spacetextureId, opentextureId, mixedtextureId;
 
 float xwidth;
 float yheight;
@@ -17,8 +15,8 @@ void space_init()
 {
   // Place one-time initialization code here
 spacetextureId = loadTexture("textures/Space.jpg");
-megatextureId[0] = loadTexture("textures/Openglhf.jpg");
-megatextureId[1] = loadTexture("textures/mixed.jpg");
+opentextureId = loadTexture("textures/Openglhf.jpg");
+mixedtextureId = loadTexture("textures/mixed.jpg");
 }
 
 void space_load() {
@@ -46,10 +44,32 @@ void space_disp()
   glLoadMatrixd(getObjectMatrix());
   // Enable Gouraud shading
   glShadeModel(GL_SMOOTH);
-  
   // Draw polygon
   glEnable(GL_CULL_FACE);
   glCullFace(GL_BACK);
+
+
+  glPushMatrix();
+glDisable(GL_TEXTURE_2D);
+glTranslatef(-getElapsedTime()*400,0,0);
+float wegg = 14000.0;
+glBegin(GL_POLYGON);
+glColor3f(1.0,1.0,1.0);
+glVertex3f(wegg,-1000.0, -450);
+glVertex3f(wegg, 1000, -450);
+glVertex3f(wegg-1000.0f, 0.0,-450);
+glEnd();
+
+
+glBegin(GL_QUADS);
+glVertex3f(wegg, -1000.0,-450);	// Bottom Left
+glVertex3f(wegg+3000.0f,-1000.0,-450);	// Bottom Right
+glVertex3f(wegg+3000.0f,1000.0,-450);	// Top Right
+glVertex3f(wegg,1000,-450);	// Top Left
+glEnd();
+glPopMatrix();
+
+
   //load texture
   glEnable(GL_TEXTURE_2D);
   glBindTexture(GL_TEXTURE_2D, spacetextureId);
@@ -128,19 +148,19 @@ float textureStart =0.0;
 float textureFinish =1.0;
 float tS = textureStart;
 float tF = textureFinish;
-
+float xXx = 0.072;
+float fixit = 0.07;
 
 glEnable(GL_TEXTURE_2D);
-glBindTexture(GL_TEXTURE_2D, megatextureId[1]);
-
+glBindTexture(GL_TEXTURE_2D, mixedtextureId);
 glBegin(GL_QUADS);				// Start Drawing A Textured Quad
-glTexCoord2f(tF, tF);
-glVertex3f(megaWidth, -megaheight-160.0f,-megaDepth);	// Bottom Left
-glTexCoord2f(tS, tF);
-glVertex3f(megaWidth+1000.0f,-megaheight-160.0f,-megaDepth);	// Bottom Right
-glTexCoord2f(tS, tS);
-glVertex3f(megaWidth+1000.0f,-megaheight,-megaDepth);	// Top Right
- glTexCoord2f(tF, tS);
+glTexCoord2f(-fixit+tS, tF);
+glVertex3f(megaWidth, -megaheight-200.0f,-megaDepth);	// Bottom Left
+glTexCoord2f(-fixit+tF, tF);
+glVertex3f(megaWidth+2000.0f,-megaheight-200.0f,-megaDepth);	// Bottom Right
+glTexCoord2f(-fixit+tF+xXx, tS);
+glVertex3f(megaWidth+2000.0f,-megaheight,-megaDepth);	// Top Right
+ glTexCoord2f(-fixit+tS+xXx, tS);
 glVertex3f(megaWidth,-megaheight,-megaDepth);	// Top Left
 glEnd();
 
@@ -148,18 +168,19 @@ glEnd();
 
 megaWidth = xwidth*3;
 
-glBindTexture(GL_TEXTURE_2D, megatextureId[0]);
+glBindTexture(GL_TEXTURE_2D, opentextureId);
 
 glBegin(GL_QUADS);
 glTexCoord2f(tS, tF);				// Start Drawing A Textured Quad
 glVertex3f(megaWidth, megaheight,-megaDepth);	// Bottom Left
 glTexCoord2f(tF, tF);
-glVertex3f(megaWidth+1000.0f,megaheight,-megaDepth);	// Bottom Right
+glVertex3f(megaWidth+650.0f,megaheight,-megaDepth);	// Bottom Right
  glTexCoord2f(tF, tS);
-glVertex3f(megaWidth+1000.0f,megaheight+160.0f,-megaDepth);	// Top Right
+glVertex3f(megaWidth+650.0f,megaheight+160.0f,-megaDepth);	// Top Right
 glTexCoord2f(tS, tS);
 glVertex3f(megaWidth,megaheight+160.0f,-megaDepth);	// Top Left
 glEnd();
+
 
 //************************STAR START************************************//
 /*
@@ -174,7 +195,7 @@ float textureStart =0.0;
 float textureFinish =1.0;
 float tS = textureStart;
 float tF = textureFinish;
-float xXx = 0.44;
+
 glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S, GL_CLAMP);
 glBindTexture(GL_TEXTURE_2D, megatextureId[0]);		// Select The First Mask Texture
 glBegin(GL_QUADS);				// Start Drawing A Textured Quad

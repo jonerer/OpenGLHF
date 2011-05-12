@@ -141,7 +141,7 @@ int main(int argc, char **argv)
   scenes[SPACE].init = space_init;
   scenes[SPACE].load = space_load;
   scenes[SPACE].disp = space_disp;
-  scenes[SPACE].time = 30000;
+  scenes[SPACE].time = 41000;
 
   curr_scene = START_SCENE;
   int i;
