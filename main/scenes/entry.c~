@@ -25,7 +25,7 @@
 #define SCREEN 3
 #define SPACE 4
 
-#define START_SCENE SCREEN
+#define START_SCENE TUNNEL
 
 struct _SceneStruct {
  void (*init)();
@@ -38,7 +38,7 @@ struct _SceneStruct {
 struct _SceneStruct scenes [SCENES];
 
 int millis_on_scene = 0;
-int curr_scene = SPACE;
+int curr_scene = WATER;
 int w_height = 800;
 int w_width = 800;
 
@@ -134,7 +134,7 @@ int main(int argc, char **argv)
   scenes[SCREEN].init = screen_init;
   scenes[SCREEN].load = screen_load;
   scenes[SCREEN].disp = screen_disp;
-  scenes[SCREEN].time = 60000;
+  scenes[SCREEN].time = 120000;
  
   screen_opts(w_width, w_height);
 

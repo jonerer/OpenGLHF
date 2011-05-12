@@ -1,4 +1,4 @@
-
+#include "FTGL/src/FTGL/ftgl.h"
 #include <GL/glut.h>
 #include <math.h>
 
@@ -22,7 +22,7 @@ void display()
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
 
-  glRotatef(getElapsedTime() * 360, 0, 0, 1);
+  glRotatef(getElapsedTime() * 36, 0, 0, 1);
 
   // Enable Gouraud shading
   glShadeModel(GL_SMOOTH);

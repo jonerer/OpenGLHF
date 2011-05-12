@@ -1,8 +1,7 @@
 
-all : lab1-1 lab1-2 lab1-3 lab1-4 lab1-5 lab1-6 lab1-7
+all : lab1-2 lab1-3 lab1-4 lab1-5 lab1-6 lab1-7
 
-lab1-1 : lab1-1.c helpers.c readppm.c readjpeg.c zpr.c
-	gcc -Wall -o lab1-1 -lGL -lglut -ljpeg lab1-1.c helpers.c readppm.c readjpeg.c zpr.c
+
 
 lab1-2 :  lab1-2.c helpers.c readppm.c readjpeg.c zpr.c
 	gcc -Wall -o lab1-2 -lGL -lglut -ljpeg lab1-2.c helpers.c readppm.c readjpeg.c zpr.c
@@ -24,4 +23,4 @@ lab1-7 :  lab1-7.c helpers.c readppm.c readjpeg.c zpr.c
 
 
 clean :
-	rm lab1-1 lab1-2 lab1-3 lab1-4 lab1-5 lab1-6 lab1-7
+	rm lab1-2 lab1-3 lab1-4 lab1-5 lab1-6 lab1-7

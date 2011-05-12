@@ -1,4 +1,4 @@
-
+#include "FTGL/ftgl.h"
 #include <GL/glut.h>
 #include <math.h>
 

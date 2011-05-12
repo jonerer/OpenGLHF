@@ -1,43 +1,55 @@
-
+#include <math.h>	
+#include "helpers.h"					 
+#include <stdio.h>						
+#include <stdarg.h>			
 #include <GL/glut.h>
-#include <math.h>
 
-#include "helpers.h"
+GLuint	base;							// Base Display List For 
+GLfloat	cnt1;							// 1st Counter Used To 
+GLfloat	cnt2;							// 2nd Counter Used To 
 
 void init()
 {
   // Place one-time initialization code here
+	glShadeModel(GL_SMOOTH);				// Enable Smooth Shading
+	glClearColor(0.0f, 0.0f, 0.0f, 0.5f);			// Black Background
+	glClearDepth(1.0f);					// Depth Buffer Setup
+	glEnable(GL_DEPTH_TEST);				// Enables Depth Testing
+	glDepthFunc(GL_LEQUAL);					// The Type Of Depth 
+	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);	// Really Nice Perspective 
+
+	BuildFont();						// Build The Font
+
+	return 1;						// Initialization Went OK
 }
 
 void display()
 {
-  // This function is called whenever it is time to render
-  //  a new frame; due to the idle()-function below, this
-  //  function will get called several times per second
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	// Clear The Screen And 
+	glLoadIdentity();					// Reset The View
+	glTranslatef(0.0f,0.0f,-1.0f);				// Move One Unit Into The 	
+		
 
-  // Clear framebuffer & zbuffer
-  glClearColor(0.3, 0, 0, 1);
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	// Pulsing Colors Based On Text Position
+	glColor3f(1.0f*float(cos(cnt1)),1.0f*float(sin(cnt2)),1.0f-0.5f*float(cos(cnt1+cnt2)));
 
-  // Enable Gouraud shading
-  glShadeModel(GL_SMOOTH);
+	
+		
 
-  // Draw polygon
-  glBegin(GL_POLYGON);
-  glColor3f(1, 1, 1);
-  glVertex3f(-0.5, 0.5, 0.0);
-  glColor3f(0, 1, 1);
-  glVertex3f(-0.5,-0.5, 0.0);
-  glColor3f(1, 1, 0.3);
-  glVertex3f( 0.5,-0.5, 0.0);
-  glColor3f(1, 0, 1);
-  glVertex3f( 1, 0, 0.0);
-  glColor3f(1, 0.5, 1);
-  glVertex3f( 0.5, 0.5, 0.0);
-  glEnd();
+	// Position The Text On The Screen
+	glRasterPos2f(-0.45f+0.05f*float(cos(cnt1)), 0.35f*float(sin(cnt2)));
 
-  // Swap front- and backbuffers
-  glutSwapBuffers();
+	
+		
+
+ 	glPrint("Active OpenGL Text With NeHe - %7.2f", cnt1);	// Print GL Text To The Screen
+
+	
+		
+
+	cnt1+=0.051f;						// Increase The First Counter
+	cnt2+=0.005f;						// Increase The Second Counter
+	return 1;						// Everything Went OK
 }
 
 void idle()
@@ -48,6 +60,59 @@ void idle()
   // frame
   glutPostRedisplay();
 }
+
+GLvoid BuildFont(GLvoid)					// Build Our Bitmap Font
+{
+	HFONT	font;						// Windows Font ID
+	HFONT	oldfont;					// Used For Good House 
+
+	base = glGenLists(96);					// Storage For 96 	
+
+	font = CreateFont(	-24, 0,  0, 0, FW_BOLD, FALSE, FALSE, FALSE, ANSI_CHARSET, OUT_TT_PRECIS, CLIP_DEFAULT_PRECIS, ANTIALIASED_QUALITY, FF_DONTCARE|DEFAULT_PITCH, "Courier New");		
+
+	oldfont = (HFONT)SelectObject(hDC, font);		// Selects The Font We Want
+	wglUseFontBitmaps(hDC, 32, 96, base);			// Builds 96 Characters Starting At Character 32
+	SelectObject(hDC, oldfont);				// Selects The Font We Want
+	DeleteObject(font);					// Delete The Font
+}
+GLvoid KillFont(GLvoid)						// Delete The Font List
+{
+ 	glDeleteLists(base, 96);				// Delete All 96 Characters ( NEW )
+}
+GLvoid glPrint(const char *fmt, ...)				// Custom GL "Print" 
+{
+
+
+		
+
+	char		text[256];				// Holds Our String
+	va_list		ap;					// Pointer To List Of 	
+		
+
+	if (fmt == NULL)					// If There's No Text
+		return;						// Do Nothing
+
+
+		
+
+	va_start(ap, fmt);					
+	    vsprintf(text, fmt, ap);				
+	va_end(ap);						
+
+		
+	
+		
+
+	glPushAttrib(GL_LIST_BIT);				
+	glListBase(base - 32);					
+
+	
+		
+
+	glCallLists(strlen(text), GL_UNSIGNED_BYTE, text);	
+	glPopAttrib();						
+}
+
 
 int main(int argc, char **argv)
 {
