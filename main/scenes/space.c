@@ -1,4 +1,5 @@
 
+
 #include <GL/glut.h>
 #include <math.h>
 #include "../helpers.h"
@@ -16,9 +17,11 @@ float starOffsetX, starOffsetY, starDepth;
 void space_init()
 {
   // Place one-time initialization code here
-spacetextureId = loadTexture("../textures/Space.jpg");
-megatextureId[0] = loadTexture("../textures/megamanmask.jpg");
-megatextureId[1] = loadTexture("../textures/megamantest.jpg");
+//spacetextureId = loadTexture("../textures/Space.jpg");
+//megatextureId[0] = loadTexture("../textures/megamanmask.jpg");
+//megatextureId[1] = loadTexture("../textures/megamantest.jpg");
+// tog bort dem, för de låg inte i gitten :p
+// ska nog ligga i space_load me, så d körs när progget startar
 }
 
 void space_load() {
