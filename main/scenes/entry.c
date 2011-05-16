@@ -35,8 +35,10 @@ struct _SceneStruct {
  int time;
 };
 
+
 struct _SceneStruct scenes [SCENES];
 
+float lastTime;
 int millis_on_scene = 0;
 int curr_scene = WATER;
 int w_height = 800;
@@ -81,7 +83,10 @@ void init(int scene)
 void timer(int i)
 {
   glutTimerFunc(20, timer, i);
-  millis_on_scene += 20;
+
+  //printf("millis on scene: %i \n", );
+  millis_on_scene += (int)((getElapsedTime() - lastTime)*1000);
+  lastTime = getElapsedTime();
   //printf (" %d, %d : %d \n", curr_scene, millis_on_scene, scenes[curr_scene].time);
   if (millis_on_scene >= scenes[curr_scene].time) {
     millis_on_scene = 0;
@@ -152,6 +157,7 @@ int main(int argc, char **argv)
   init(START_SCENE);
 
   // Register our display- and idle-functions with GLUT
+  lastTime = getElapsedTime();
   glutDisplayFunc(display);
   glutTimerFunc(20, timer, 0);
 
