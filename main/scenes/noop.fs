@@ -6,8 +6,8 @@ uniform sampler2D texture;
 void main()
 {
   
-  vec3 p = Vert;
-  float strength = clamp(p.z, -180, 0) + clamp(time*30, 0, 180);
+  vec3 p = Vert.xyz;
+  float strength = clamp(p.z, -180.0, 0.0) + clamp(time*30.0, 0.0, 180.0);
   gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
 
   strength = clamp(strength, 1.0, 50.0);

@@ -7,13 +7,13 @@ uniform sampler2D texture2;
 uniform sampler2D texture3;
 
 vec4 screen() {
-  float screentime = time + 60;
+  float screentime = time + 60.0;
   // this is the "screen"-shader. ctrl-c:d.
   gl_FragColor = gl_Color;
   gl_FragColor.r = clamp(Vert.y + 0.05 * 25.0, 0.0, 25.0);
 
   //vec2 position = - 1.0 + 2.0 * gl_FragCoord.xy / resolution.xy;
-  vec2 position = Pos;
+  vec2 position = Pos.xy;
   bool y_shear = screentime > 15.0;
   bool x_shear = screentime > 20.0;
   bool has_velocity = screentime > 3.0;
@@ -29,7 +29,7 @@ vec4 screen() {
   float darkness = pow(dist, clamp(velocity, 0.0, 1.0));
   float stretch = 3.0;
 
-  uv.y = (1 - (dist - time/4.0 * velocity)) / stretch;
+  uv.y = (1.0 - (dist - time/4.0 * velocity)) / stretch;
   uv.x = position.x / pow(dist, velocity) / stretch;
 
   if (x_shear) {
@@ -61,7 +61,7 @@ void main()
     // två blobbar!
     vec2 move1;
     move1.x = cos(timeReaches*0.5)*0.4;
-    move1.y = sin(timeReaches*1)*0.4;
+    move1.y = sin(timeReaches*1.0)*0.4;
     vec2 move2;
     move2.x = cos(timeReaches*1.3)*0.4;
     move2.y = sin(timeReaches*1.7)*0.4;
@@ -76,10 +76,10 @@ void main()
     float hardcol = pow(metaball, 6.5);
     float bgcol = metaball;
 
-    // what uv are we at, bro?
-    vec2 uv = p;
-    uv.x -= move1;
-    uv.y -= move2;
+    // what uv are we at, bro? (for the border-effect)
+    vec2 uv = p.xy;
+    uv -= move1;
+    uv -= move2;
     vec3 tcol = texture2D(texture, uv).rgb;
 
     vec3 bgtex = texture2D(texture3, p).rgb;
@@ -92,14 +92,14 @@ void main()
   uv.y = uv.y;
   uv.x = uv.x / 2.0 + timeReaches / 140.0;
   
-  float fadeTimeFactor = 1;
+  float fadeTimeFactor = 1.0;
 
   vec2 dist = Pos.xy;
   dist.x /= clamp(timeReaches - 3.0, 0.0, 100.0) / 5.0;
   dist.y /= clamp(timeReaches - 3.0, 0.0, 100.0) / 5.0;
   float d = clamp(dot(dist, dist), 0.0, 1.0);
   d = smoothstep(0.0, 1.0, d);
-  float d2 = 1 - d;
+  float d2 = 1.0 - d;
 
   vec4 bg = texture2D(texture3, uv.xy);
   gl_FragColor = bg*d2 + screenShaderd*d + metathing*d2;

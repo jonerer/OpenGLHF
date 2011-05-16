@@ -11,7 +11,7 @@ void main()
   gl_FragColor.r = clamp(Vert.y + 0.05 * 25.0, 0.0, 25.0);
 
   //vec2 position = - 1.0 + 2.0 * gl_FragCoord.xy / resolution.xy;
-  vec2 position = Pos;
+  vec2 position = Pos.xy;
   bool y_shear = time > 15.0;
   bool x_shear = time > 20.0;
   bool has_velocity = time > 3.0;
@@ -27,7 +27,7 @@ void main()
   float darkness = pow(dist, clamp(velocity, 0.0, 1.0));
   float stretch = 3.0;
 
-  uv.y = (1 - (dist - time/4.0 * velocity)) / stretch;
+  uv.y = (1.0 - (dist - time * velocity / 4.0)) / stretch;
   uv.x = position.x / pow(dist, velocity) / stretch;
 
   if (x_shear) {
