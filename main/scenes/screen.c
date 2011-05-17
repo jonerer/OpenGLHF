@@ -45,6 +45,9 @@ void screen_init()
   // Place one-time initialization code here
   initHelperLibrary();
   scTimeStarted = scElapsedTime();
+}
+
+void screen_load() {
   // load model
   screen_model = loadModel("../models/various/teapot.obj"); 
   setModelCenter(screen_model, 0.f, 0.f, 0.f);
@@ -89,10 +92,7 @@ void screen_init()
   resLocation = getUniformLocation(screen_shaderProgram, "resolution");
   shaderTextureLocation = getUniformLocation(screen_shaderProgram, "texture");
   shaderTextureLocation2 = getUniformLocation(screen_shaderProgram, "texture2");
-}
 
-void screen_load() {
-  printf("whaaaa\n");
 }
 
 
@@ -152,15 +152,15 @@ for debugging:
   float startWaveEntry = 0.0;
   float startReturn = 0.0;
 */
-  float startFall = 0.0;
-  float startLongFall = 0.0;
-  float startWaveEntry = 0.0;
-  float startReturn = 0.0;
+  float startFall = 40.0;
+  float startLongFall = 42.0;
+  float startWaveEntry = 46.0;
+  float startReturn = 60.0;
 /*
 for gametime:
   float startFall = 40.0;
   float startLongFall = 42.0;
-  float startWaveEntry = 50.0;
+  float startWaveEntry = 46.0;
   float startReturn = 60.0;
 */
   // the Spacetrippin' trip
@@ -198,7 +198,7 @@ for gametime:
   glActiveTexture(GL_TEXTURE2);
   glBindTexture(GL_TEXTURE_2D, textureId3);
 
-  glUniform1i(getUniformLocation(screen_thorus, "texture"), 0);
+//  glUniform1i(getUniformLocation(screen_thorus, "texture"), 0);
   glUniform1i(getUniformLocation(screen_thorus, "texture2"), 1);
   glUniform1i(getUniformLocation(screen_thorus, "texture3"), 2);
 
