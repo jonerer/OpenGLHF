@@ -55,29 +55,29 @@ void main()
 
 
   // gonna do a meatball-thing yeah :D
-  vec2 p = (Pos.xy / 2.0) + 0.5;
+  vec2 p2 = (Pos.xy / 2.0) + 0.5;
+  vec2 p = Pos.xy;
   //gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
 
     // två blobbar!
     vec2 move1;
-    move1.x = cos(timeReaches*0.5)*0.4;
-    move1.y = sin(timeReaches*1.0)*0.4;
+    move1.x = cos(timeReaches*0.5)*0.5;
+    move1.y = sin(timeReaches*1.0)*0.6;
     vec2 move2;
-    move2.x = cos(timeReaches*1.3)*0.4;
-    move2.y = sin(timeReaches*1.7)*0.4;
-
+    move2.x = cos(timeReaches*1.3)*0.7;
+    move2.y = sin(timeReaches*1.4)*0.8;
+    
     float r1 =(dot(p-move1,p-move1))*16.0;
     float r2 =(dot(p+move2,p+move2))*32.0;
 
-    //sum the meatballs
+    // plussa ihop
     float metaball =(1.0/r1+1.0/r2);
-    //alter the cut-off power
-    float col = clamp(0.0, 1.0, pow(metaball,6.0));
+    float col = clamp(0.0, 1.0, pow(metaball,5.0));
     float hardcol = pow(metaball, 6.5);
     float bgcol = metaball;
 
     // what uv are we at, bro? (for the border-effect)
-    vec2 uv = p.xy;
+    vec2 uv = p2.xy;
     uv -= move1;
     uv -= move2;
     vec3 tcol = texture2D(texture, uv).rgb;
@@ -88,15 +88,16 @@ void main()
     //vec4 metathing = vec4(tcol * col + hardcol + bgtex * bgcol, 1.0);
     vec4 metathing = vec4(hardcol + bgtex * bgcol, 1.0);
 
-  uv = p.xy;
+  uv = p2.xy;
   uv.y = uv.y;
   uv.x = uv.x / 2.0 + timeReaches / 140.0;
   
   float fadeTimeFactor = 1.0;
+  float fadeStartDelay = 3.0;
 
   vec2 dist = Pos.xy;
-  dist.x /= clamp(timeReaches - 3.0, 0.0, 100.0) / 5.0;
-  dist.y /= clamp(timeReaches - 3.0, 0.0, 100.0) / 5.0;
+  dist.x /= clamp(pow((timeReaches - fadeStartDelay) / 3.0, 3), 0.0, 100.0) / 5.0;
+  dist.y /= clamp(pow((timeReaches - fadeStartDelay) / 3.0, 3), 0.0, 100.0) / 5.0;
   float d = clamp(dot(dist, dist), 0.0, 1.0);
   d = smoothstep(0.0, 1.0, d);
   float d2 = 1.0 - d;

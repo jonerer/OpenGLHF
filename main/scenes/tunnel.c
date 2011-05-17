@@ -14,6 +14,8 @@ float camera_z = 0;
 int maxaddr = 0;
 int timeStarted = 0;
 
+float meetCubeAt = 10;
+
 float myElapsedTime() {
   return getElapsedTime() - timeStarted;
 }
@@ -122,7 +124,6 @@ for (;z <= camera_z + 200; z++) {
 	float xplusone = cos((i+1)*PI/180.0);
 	float yplusone = sin((i+1)*PI/180.0);
 
-
   	  glBegin(GL_POLYGON);
           glTexCoord2f(ztexphase, textint);
 	  glVertex3f(x*hyp + curr_curv, y*hyp, -z*zstep);
@@ -143,7 +144,17 @@ for (;z <= camera_z + 200; z++) {
   if (z_from_camera > 0) {
     curr_curv = curvnext;
   }
-
+  /*
+      glPushMatrix();
+      glTranslatef(0, 0, -camera_z - (meetCubeAt - myElapsedTime()));
+      printf("%f \n", -camera_z - (meetCubeAt - myElapsedTime()));
+      glColor3f(0.0, 0.0, 0);
+	  glRotatef(-myElapsedTime()*5, 0, 0, 1);
+	  glRotatef(myElapsedTime()*90, 1, 1, 0);
+      glutSolidCube(1.0);
+      glPopMatrix();
+      glColor3f(1.0, 1.0, 1.0);
+*/
 }
 
   // Swap front- and backbuffers

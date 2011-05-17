@@ -207,16 +207,15 @@ for gametime:
   float returnDist = 60.0;
 
   glUniform1f(getUniformLocation(screen_thorus, "time"), scElapsedTime() - startReturn);
-  glUniform1f(getUniformLocation(screen_thorus, "timeReaches"), scElapsedTime() - startReturn - returnDist/returnSpeed);
+  glUniform1f(getUniformLocation(screen_thorus, "timeReaches"), scElapsedTime() - startReturn - ((startReturn > 1.0) ? returnDist/returnSpeed : -3.0));
 
   glPushMatrix();
   if ((scElapsedTime()-startReturn)*returnSpeed > returnDist || startReturn < 1.0) {
     glRectf(-1.0, 1.0, 1.0, -1.0);
   }
   glTranslatef(0, 0, -returnDist);
-  if (scElapsedTime() > startReturn) {
+  if (scElapsedTime() > startReturn && startReturn > 1.0) {
     glTranslatef(0, 0, (scElapsedTime()-startReturn)*returnSpeed);
-
   }
   glRotatef(scElapsedTime()*90, 1.0, 0.6, 0.0);
   glutSolidTorus(1.0, 2.0, 120, 180);
