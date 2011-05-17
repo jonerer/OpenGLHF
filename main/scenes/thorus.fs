@@ -1,5 +1,6 @@
 uniform float time;
 uniform float timeReaches;
+uniform float whiteoutTime;
 varying vec4 Pos;
 varying vec4 Vert;
 uniform sampler2D texture;
@@ -70,8 +71,10 @@ void main()
     float r1 =(dot(p-move1,p-move1))*16.0;
     float r2 =(dot(p+move2,p+move2))*32.0;
 
+    float whiteout = clamp((timeReaches - whiteoutTime) * 2.0 , 1.0, 1000.0);
+
     // plussa ihop
-    float metaball =(1.0/r1+1.0/r2);
+    float metaball =(whiteout/r1+whiteout/r2);
     float col = clamp(0.0, 1.0, pow(metaball,5.0));
     float hardcol = pow(metaball, 6.5);
     float bgcol = metaball;

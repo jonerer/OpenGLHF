@@ -151,17 +151,20 @@ for debugging:
   float startLongFall = 0.0;
   float startWaveEntry = 0.0;
   float startReturn = 0.0;
+  float whiteoutTime = 40.0;
 */
   float startFall = 40.0;
   float startLongFall = 42.0;
   float startWaveEntry = 46.0;
   float startReturn = 60.0;
+  float whiteoutTime = 40.0;
 /*
 for gametime:
   float startFall = 40.0;
   float startLongFall = 42.0;
   float startWaveEntry = 46.0;
   float startReturn = 60.0;
+  float whiteoutTime = 40.0;
 */
   // the Spacetrippin' trip
     if (scElapsedTime() > startFall) {
@@ -208,6 +211,7 @@ for gametime:
 
   glUniform1f(getUniformLocation(screen_thorus, "time"), scElapsedTime() - startReturn);
   glUniform1f(getUniformLocation(screen_thorus, "timeReaches"), scElapsedTime() - startReturn - ((startReturn > 1.0) ? returnDist/returnSpeed : -3.0));
+  glUniform1f(getUniformLocation(screen_thorus, "whiteoutTime"), whiteoutTime);
 
   glPushMatrix();
   if ((scElapsedTime()-startReturn)*returnSpeed > returnDist || startReturn < 1.0) {
